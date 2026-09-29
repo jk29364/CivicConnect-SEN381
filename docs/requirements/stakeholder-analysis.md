@@ -93,10 +93,10 @@ FR-007 | Staff | Drafted | - | - | Baselined | - | - |
 FR-008 | Managing Agent | Drafted | - | - | Baselined | - | - |
 FR-009 | Managing Agent | Drafted | - | - | Baselined | - | - |
 FR-010 | Implied (traceability) | Drafted | - | - | Baselined | - | - |
-FR-011 | Business Need (stakeholder conflict) | Drafted | - | - | Baselined | Updated (M2) | - |
-NFR-001 | Security constraint | Drafted | - | - | Baselined | - | - |
-NFR-002 | Business need | Drafted | - | - | overlaps with FR-011 | Updated (M2) | - |
+FR-011 | Business Need (stakeholder conflict) | Drafted | - | - | Baselined | - | ASR-3 |
+NFR-001 | Security constraint | Drafted | - | - | Baselined | - | ASR-1 |
+NFR-002 | Business need | Drafted | - | - | overlaps with FR-011 | - | ASR-3 |
 NFR-003 | Business need | Drafted | - | - | Baselined | - | - |
-NFR-004 | Accountability need | Drafted | - | - | Baselined | - | - |
-NFR-005 | Quality need | Drafted | - | - | Baselined | Pending — see §5.5 | - |
-NFR-006 | Forward Engineering Consideration | still needed | - | - | Draft | Pending — see §5.4 | - |
+NFR-004 | Accountability need | Drafted | - | - | Baselined | - | ASR-2 |
+NFR-005 | Quality need | Drafted | - | - | Baselined | - | ASR-4 |
+NFR-006 | Forward Engineering Consideration | still needed | - | - | Draft | - | - |
