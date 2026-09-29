@@ -6,7 +6,7 @@ CivicConnect will give Wonderpark Estates a single controlled platform for resid
 Business Value - faster resolution of safety-critical issues, an auditable record for body corporate accountability and levy-funded maintenance decisions, reduced friction for residents, clearer workload visibility for maintenance and security staff.
 
 Stakeholder Analysis
-Stakeholder | Role/Interest | Influence | Key Needs
+Stakeholder | Role/Interest | Influence | Key Needs |
 | --- | --- | --- | --- |
 Resident/Homeowner | Submits requests, wants issues fixed | Medium | Easy submission, status visibility, timely feedback
 Tenant (renting resident) | Same as resident, but may need landlord or agent involved | Low-Medium | Same as above, plus clarity on who is responsible for what (owner vs body corporate)
@@ -42,8 +42,8 @@ SLA-based auto-escalation of overdue high-severity requests.
 Resident-facing analytics/dashboard beyond basic status/history view
 
 Requirements Set
-ID | Type | Requirement | Source | Priority
-| --- | --- | --- | --- | --- |
+ID | Type | Requirement | Source | Priority | Baseline Note
+| --- | --- | --- | --- | --- | --- |
 FR-001 | Functional | Resident shall submit a request with category (Mainenance/Security/Common Area/Lost Property), description, and unit/location | Resident capability | High
 FR-002 | Functional | Security/Maintenance staff shall update request status through defined transitions | Staff capability | High
 FR-003 | Functional | Resident shall view status and history of their own submitted requests | Resident capability | High
@@ -54,13 +54,13 @@ FR-007 | Functional | Staff shall record comment/actions taken on a request | St
 FR-008 | Functional | Managing Agent shall view counts of open/overdue/resolved/closed requests | Management capability | High
 FR-009 | Functional | Managing Agent shall view requests grouped by category and severity | Management capability | Medium
 FR-010 | Functional | System shall assign a unique reference number to every submitted request | Implied (traceability) | High
-FR-011 | Functional | Resident/Staff shall set or view a severity flag (Low/Medium/High) on a request | Business need (prioritisation, from stakeholder conflict) | High
+FR-011 | Functional | Resident/Staff shall set or view a severity flag (Low/Medium/High) on a request | Business need (prioritisation, from stakeholder conflict) | High | Updated (M2)
 NFR-001 | Security | Only authenticated residents/staff shall access request details containing unit numbers or personal info | Security constraint | High
-NFR-002 | Reliability | Safety-critical requests (e.g. broken perimeter security) flagged "High" severity shall be visibly distinguised from routine requests in the staff queue | Business need (prioritisation) | High
+NFR-002 | Reliability | Safety-critical requests (e.g. broken perimeter security) flagged "High" severity shall be visibly distinguised from routine requests in the staff queue | Business need (prioritisation) | High | Updated (M2)
 NFR-003 | Usability | A first-time resident shall submit a request in under 3 minutes | Business Need | Medium
 NFR-004 | Reliability | Request status changes shall never be silently overwritten - history preserved | Accountability need | High
-NFR-005 | Performance | Request list views shall load within 3 seconds under normal load (indicative - refine once hosting is chosen) | Quality constraint | Low
-NFR-006 | Maintainability | Data model shall associate all requests/users with a single complex entity, to avoid architectural reqork if multi-tenant support is added later | Forward Engineering Consideration (deferred multi-tenancy) | Medium
+NFR-005 | Performance | Request list views shall load within 3 seconds under normal load (indicative - refine once hosting is chosen) | Quality constraint | Low | Pending - see §5.5 
+NFR-006 | Maintainability | Data model shall associate all requests/users with a single complex entity, to avoid architectural reqork if multi-tenant support is added later | Forward Engineering Consideration (deferred multi-tenancy) | Medium | Pending - see §5.4
 
 Acceptance Criteria
 FR-001: Given a logged-in resident, when they submit a request with category, description and unit/location completed, then the system creates a request with status "New", a unique reference number, and deault severity "Low" unless otherwise selected.
