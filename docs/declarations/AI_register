@@ -3,5 +3,6 @@
   02: Claude AI was used by Karabo Masoka for the RTM template and the Requirements Set (FR/NFR) template.
   03: Gemini was used by Jimmy to structure the risk register, constraint analysis and forward engineering documents.
   04: Serves as a consolidation of entries 02 and 03 into the final word document file.
-  05: Calude AI was used by Karabo in helping to resolve the overlapping of FR-011 & NFR-002 as well as updating the RTM with new columns (Baseline Note and ASR link)
-  06: Claude AI was used by Karabo to consolidate and rank which requirements (functional and non-functional) materially influence the architecture, data and tech stack for the ASRs and updating the RTM with a new column (ASR link).
+  05: Calude AI was used by Karabo Masoka in helping to resolve the overlapping of FR-011 & NFR-002 as well as updating the RTM with new columns (Baseline Note and ASR link)
+  06: Claude AI was used by Karabo Masoka to consolidate and rank which requirements (functional and non-functional) materially influence the architecture, data and tech stack for the ASRs and updating the RTM with a new column (ASR link).
+  07: Claude AI was used by Karabo Masoka to aid in the conceptual architecture diagram, and summarising the differences between monolith and microservices to be able to compare in relation to Wonderpark Estates' CivicConnect
