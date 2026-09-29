@@ -81,22 +81,22 @@ NFR-004: Given a request whose status is changed, when the change is saved, then
 NFR-005: Given a request list view is loaded under normal conditions (e.g. up to 200 active requests), when a user navigates to it, then the page shall render within 3 seconds.
 
 Requirements Traceability Matrix (RTM)
-Req ID | Source/Stakeholder | Acceptance Criteria | Design (to be determined) | Test (to be determined) | Status
-| --- | --- | --- | --- | --- | --- |
-FR-001 | Resident | Drafted | - | - | Baselined
-FR-002 | Staff | Drafted | - | - | Baselined
-FR-003 | Resident | Drafted | - | - | Baselined
-FR-004 | Resident (feedback need) | Drafted | - | - | Baselined
-FR-005 | Staff | Drafted | - | - | Baselined
-FR-006 | Staff | Drafted | - | - | Baselined
-FR-007 | Staff | Drafted | - | - | Baselined
-FR-008 | Managing Agent | Drafted | - | - | Baselined
-FR-009 | Managing Agent | Drafted | - | - | Baselined
-FR-010 | Implied (traceability) | Drafted | - | - | Baselined
-FR-011 | Business Need (stakeholder conflict) | Drafted | - | - | Baselined
-NFR-001 | Security constraint | Drafted | - | - | Baselined
-NFR-002 | Business need | Drafted | - | - | overlaps with FR-011
-NFR-003 | Business need | Drafted | - | - | Baselined
-NFR-004 | Accountability need | Drafted | - | - | Baselined
-NFR-005 | Quality need | Drafted | - | - | Baselined
-NFR-006 | Forward Engineering Consideration | still needed | - | - | Draft
+Req ID | Source/Stakeholder | Acceptance Criteria | Design (to be determined) | Test (to be determined) | Status | Baseline Note | ASR link
+| --- | --- | --- | --- | --- | --- | --- | --- |
+FR-001 | Resident | Drafted | - | - | Baselined | - | - |
+FR-002 | Staff | Drafted | - | - | Baselined | - | - |
+FR-003 | Resident | Drafted | - | - | Baselined | - | - |
+FR-004 | Resident (feedback need) | Drafted | - | - | Baselined | - | - |
+FR-005 | Staff | Drafted | - | - | Baselined | - | - |
+FR-006 | Staff | Drafted | - | - | Baselined | - | - |
+FR-007 | Staff | Drafted | - | - | Baselined | - | - |
+FR-008 | Managing Agent | Drafted | - | - | Baselined | - | - |
+FR-009 | Managing Agent | Drafted | - | - | Baselined | - | - |
+FR-010 | Implied (traceability) | Drafted | - | - | Baselined | - | - |
+FR-011 | Business Need (stakeholder conflict) | Drafted | - | - | Baselined | Updated (M2) | - |
+NFR-001 | Security constraint | Drafted | - | - | Baselined | - | - |
+NFR-002 | Business need | Drafted | - | - | overlaps with FR-011 | Updated (M2) | - |
+NFR-003 | Business need | Drafted | - | - | Baselined | - | - |
+NFR-004 | Accountability need | Drafted | - | - | Baselined | - | - |
+NFR-005 | Quality need | Drafted | - | - | Baselined | Pending — see §5.5 | - |
+NFR-006 | Forward Engineering Consideration | still needed | - | - | Draft | Pending — see §5.4 | - |
