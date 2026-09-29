@@ -3,3 +3,4 @@
   02: Claude AI was used by Karabo Masoka for the RTM template and the Requirements Set (FR/NFR) template.
   03: Gemini was used by Jimmy to structure the risk registe, constraint analysis and forward engineering documents.
   04: Serves as a consolidation of entries 02 and 03 into the final word document file.
+  06: Claude AI was used by Karabo to consolidate and rank which requirements (functional and non-functional) materially influence the architecture, data and tech stack for the ASRs and updating the RTM with a new column (ASR link).
