@@ -1,8 +1,0 @@
-AI register entries cover an entire branch. Format as follows:
-
-01: [AI name] was used by [Member Name and Surname] to [Description]
-
-If multiple AI services were used, format as follows:
-
-01: a: [AI name] was used by [Member Name and Surname] to [Description]
-    b: [AI name] was used to [Description]
