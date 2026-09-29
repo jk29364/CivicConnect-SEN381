@@ -42,7 +42,7 @@ SLA-based auto-escalation of overdue high-severity requests.
 Resident-facing analytics/dashboard beyond basic status/history view
 
 Requirements Set
-ID | Type | Requirement | Source | Priority | Baseline Note
+ID | Type | Requirement | Source | Priority 
 | --- | --- | --- | --- | --- | --- |
 FR-001 | Functional | Resident shall submit a request with category (Mainenance/Security/Common Area/Lost Property), description, and unit/location | Resident capability | High
 FR-002 | Functional | Security/Maintenance staff shall update request status through defined transitions | Staff capability | High
@@ -54,13 +54,13 @@ FR-007 | Functional | Staff shall record comment/actions taken on a request | St
 FR-008 | Functional | Managing Agent shall view counts of open/overdue/resolved/closed requests | Management capability | High
 FR-009 | Functional | Managing Agent shall view requests grouped by category and severity | Management capability | Medium
 FR-010 | Functional | System shall assign a unique reference number to every submitted request | Implied (traceability) | High
-FR-011 | Functional | Resident/Staff shall set or view a severity flag (Low/Medium/High) on a request | Business need (prioritisation, from stakeholder conflict) | High | Updated (M2)
+FR-011 | Functional | Resident/Staff shall set or view a severity flag (Low/Medium/High) on a request | Business need (prioritisation, from stakeholder conflict) | High 
 NFR-001 | Security | Only authenticated residents/staff shall access request details containing unit numbers or personal info | Security constraint | High
-NFR-002 | Reliability | Safety-critical requests (e.g. broken perimeter security) flagged "High" severity shall be visibly distinguised from routine requests in the staff queue | Business need (prioritisation) | High | Updated (M2)
+NFR-002 | Reliability | Safety-critical requests (e.g. broken perimeter security) flagged "High" severity shall be visibly distinguised from routine requests in the staff queue | Business need (prioritisation) | High 
 NFR-003 | Usability | A first-time resident shall submit a request in under 3 minutes | Business Need | Medium
 NFR-004 | Reliability | Request status changes shall never be silently overwritten - history preserved | Accountability need | High
-NFR-005 | Performance | Request list views shall load within 3 seconds under normal load (indicative - refine once hosting is chosen) | Quality constraint | Low | Pending - see §5.5 
-NFR-006 | Maintainability | Data model shall associate all requests/users with a single complex entity, to avoid architectural reqork if multi-tenant support is added later | Forward Engineering Consideration (deferred multi-tenancy) | Medium | Pending - see §5.4
+NFR-005 | Performance | Request list views shall load within 3 seconds under normal load (indicative - refine once hosting is chosen) | Quality constraint | Low  
+NFR-006 | Maintainability | Data model shall associate all requests/users with a single complex entity, to avoid architectural reqork if multi-tenant support is added later | Forward Engineering Consideration (deferred multi-tenancy) | Medium 
 
 Acceptance Criteria
 FR-001: Given a logged-in resident, when they submit a request with category, description and unit/location completed, then the system creates a request with status "New", a unique reference number, and deault severity "Low" unless otherwise selected.
@@ -81,22 +81,22 @@ NFR-004: Given a request whose status is changed, when the change is saved, then
 NFR-005: Given a request list view is loaded under normal conditions (e.g. up to 200 active requests), when a user navigates to it, then the page shall render within 3 seconds.
 
 Requirements Traceability Matrix (RTM)
-Req ID | Source/Stakeholder | Acceptance Criteria | Design (to be determined) | Test (to be determined) | Status
-| --- | --- | --- | --- | --- | --- |
-FR-001 | Resident | Drafted | - | - | Baselined
-FR-002 | Staff | Drafted | - | - | Baselined
-FR-003 | Resident | Drafted | - | - | Baselined
-FR-004 | Resident (feedback need) | Drafted | - | - | Baselined
-FR-005 | Staff | Drafted | - | - | Baselined
-FR-006 | Staff | Drafted | - | - | Baselined
-FR-007 | Staff | Drafted | - | - | Baselined
-FR-008 | Managing Agent | Drafted | - | - | Baselined
-FR-009 | Managing Agent | Drafted | - | - | Baselined
-FR-010 | Implied (traceability) | Drafted | - | - | Baselined
-FR-011 | Business Need (stakeholder conflict) | Drafted | - | - | Baselined
-NFR-001 | Security constraint | Drafted | - | - | Baselined
-NFR-002 | Business need | Drafted | - | - | overlaps with FR-011
-NFR-003 | Business need | Drafted | - | - | Baselined
-NFR-004 | Accountability need | Drafted | - | - | Baselined
-NFR-005 | Quality need | Drafted | - | - | Baselined
-NFR-006 | Forward Engineering Consideration | still needed | - | - | Draft
+Req ID | Source/Stakeholder | Acceptance Criteria | Design (to be determined) | Test (to be determined) | Status | Baseline Note | ASR link
+| --- | --- | --- | --- | --- | --- | --- | --- |
+FR-001 | Resident | Drafted | - | - | Baselined | - | - |
+FR-002 | Staff | Drafted | - | - | Baselined | - | - |
+FR-003 | Resident | Drafted | - | - | Baselined | - | - |
+FR-004 | Resident (feedback need) | Drafted | - | - | Baselined | - | - |
+FR-005 | Staff | Drafted | - | - | Baselined | - | - |
+FR-006 | Staff | Drafted | - | - | Baselined | - | - |
+FR-007 | Staff | Drafted | - | - | Baselined | - | - |
+FR-008 | Managing Agent | Drafted | - | - | Baselined | - | - |
+FR-009 | Managing Agent | Drafted | - | - | Baselined | - | - |
+FR-010 | Implied (traceability) | Drafted | - | - | Baselined | - | - |
+FR-011 | Business Need (stakeholder conflict) | Drafted | - | - | Baselined | Updated (M2) | ASR-3
+NFR-001 | Security constraint | Drafted | - | - | Baselined | - | ASR-1 |
+NFR-002 | Business need | Drafted | - | - | overlaps with FR-011 | Updated (M2) | ASR-3
+NFR-003 | Business need | Drafted | - | - | Baselined | - | - |
+NFR-004 | Accountability need | Drafted | - | - | Baselined | - | ASR-2 |
+NFR-005 | Quality need | Drafted | - | - | Baselined | Pending - see §5.5 | ASR-4
+NFR-006 | Forward Engineering Consideration | still needed | - | - | Draft | Pending - see §5.4 | - |
