@@ -81,22 +81,22 @@ NFR-004: Given a request whose status is changed, when the change is saved, then
 NFR-005: Given a request list view is loaded under normal conditions (e.g. up to 200 active requests), when a user navigates to it, then the page shall render within 3 seconds.
 
 Requirements Traceability Matrix (RTM)
-Req ID | Source/Stakeholder | Acceptance Criteria | Design (to be determined) | Test (to be determined) | Status | Baseline Note | ASR link
-| --- | --- | --- | --- | --- | --- | --- | --- |
-FR-001 | Resident | Drafted | - | - | Baselined | - | - |
-FR-002 | Staff | Drafted | - | - | Baselined | - | - |
-FR-003 | Resident | Drafted | - | - | Baselined | - | - |
-FR-004 | Resident (feedback need) | Drafted | - | - | Baselined | - | - |
-FR-005 | Staff | Drafted | - | - | Baselined | - | - |
-FR-006 | Staff | Drafted | - | - | Baselined | - | - |
-FR-007 | Staff | Drafted | - | - | Baselined | - | - |
-FR-008 | Managing Agent | Drafted | - | - | Baselined | - | - |
-FR-009 | Managing Agent | Drafted | - | - | Baselined | - | - |
-FR-010 | Implied (traceability) | Drafted | - | - | Baselined | - | - |
-FR-011 | Business Need (stakeholder conflict) | Drafted | - | - | Baselined | - | ASR-3 |
-NFR-001 | Security constraint | Drafted | - | - | Baselined | - | ASR-1 |
-NFR-002 | Business need | Drafted | - | - | overlaps with FR-011 | - | ASR-3 |
-NFR-003 | Business need | Drafted | - | - | Baselined | - | - |
-NFR-004 | Accountability need | Drafted | - | - | Baselined | - | ASR-2 |
-NFR-005 | Quality need | Drafted | - | - | Baselined | - | ASR-4 |
-NFR-006 | Forward Engineering Consideration | still needed | - | - | Draft | - | - |
+Req ID | Source/Stakeholder | Acceptance Criteria | Design (to be determined) | Test (to be determined) | Status | Baseline Note | ASR link | Architecture / Layer Allocation
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+FR-001 | Resident | Drafted | - | - | Baselined | - | - | API (endpoint) + Service (RequestFactory)
+FR-002 | Staff | Drafted | - | - | Baselined | - | - | API + Service (state-machine rules, §4.1 baseline review) + Persistence (transaction)
+FR-003 | Resident | Drafted | - | - | Baselined | - | - | API + Persistence (query)
+FR-004 | Resident (feedback need) | Drafted | - | - | Baselined | - | - | Service (ResidentNotificationObserver)
+FR-005 | Staff | Drafted | - | - | Baselined | - | - | API + Persistence (query/index)
+FR-006 | Staff | Drafted | - | - | Baselined | - | - | API + Service
+FR-007 | Staff | Drafted | - | - | Baselined | - | - | API + Service + Persistence
+FR-008 | Managing Agent | Drafted | - | - | Baselined | - | - | Service (DashboardCountObserver) + Persistence
+FR-009 | Managing Agent | Drafted | - | - | Baselined | - | - | Persistence (query)
+FR-010 | Implied (traceability) | Drafted | - | - | Baselined | - | - | Service + Persistence 
+FR-011 | Business Need (stakeholder conflict) | Drafted | - | - | Baselined | Updated (M2) | ASR-3 | Service (Factory + Observer trigger) + Persistence (field)
+NFR-001 | Security constraint | Drafted | - | - | Baselined | - | ASR-1 | API - auth middleware 
+NFR-002 | Business need | Drafted | - | - | overlaps with FR-011 | Updated (M2) | ASR-3 | Service (Factory + Observer trigger) + Persistence (field) 
+NFR-003 | Business need | Drafted | - | - | Baselined | - | - | Frontend/UI concern - not architecture-layer allocated
+NFR-004 | Accountability need | Drafted | - | - | Baselined | - | ASR-2 | Persistence (AuditHistoryObserver + ACID transaction boundary)
+NFR-005 | Quality need | Drafted | - | - | Baselined | Pending — see §5.5 | ASR-4 | Persistence (indexing strategy)
+NFR-006 | Forward Engineering Consideration | still needed | - | - | Draft | Pending — see §5.4 | - | Persistence (data model)
