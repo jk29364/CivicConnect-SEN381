@@ -2,7 +2,7 @@
 
 *This register identifies seven downstream lifecycle concerns flagged during M1 to guide upcoming architecture and construction without premature design decisions. M2 resolutions have been added to track the evolution of the PED.*
 
-| # | Lifecycle Concern | Why It Matters Now (M1) | What It Influences Later (M2–M4) | Missing Information / M2 Status | Risk of Ignoring |
+| # | Lifecycle Concern | Why It Matters Now (M1) | What It Influences Later (M2) | Missing Information / M2 Status | Risk of Ignoring |
 | :-: | :--- | :--- | :--- | :--- | :--- |
 | **FEC-01** | **Authentication & Authorization Model** | Shapes NFR-002 and enforces distinct privilege boundaries between residents, maintenance staff, and managing agents. | Milestone 2 architecture decomposition and Milestone 3 access-control middleware. | **[M2 Resolved]:** Implemented stateless JSON Web Tokens (JWT) passed via the `Authorization: Bearer` header (ADR-INT1). | Extensive schema and route restructuring if access control is retrofitted onto an open prototype. |
 | **FEC-02** | **Deployment Platform Boundaries** | Free-tier resource limits restrict the realistic concurrency targets we can commit to in our Non-Functional Requirements. | Milestone 2 technology selection and Milestone 3 production operations and costing. | **[M2 Pending ]:** Backend and frontend deployed via free-tier cloud containers (Render/Vercel); database hosted on Supabase (ADR-STACK1). | Overpromising availability metrics that crash during live demo evaluation under load. |
