@@ -42,10 +42,10 @@
 5. ASR-2 conflict - Ensuring atomic status update and audit append across separate services requires distributed-transaction complexity that contradicts the goal of simple, defensible correctness
 
 ## ASRs and Constraints Trade-off analysis
-Dimension | ASR-1 (Auth/RBAC) | ASR-2 (Immutable History) | ASR-3 (Severity Prioritisation) | ASR-4 (Performance) | Schedule | Cost
+Architecture | ASR-1 (Auth/RBAC) | ASR-2 (Immutable History) | ASR-3 (Severity Prioritisation) | ASR-4 (Performance) | Schedule | Cost
 | --- | --- | --- | --- | --- | --- | --- |
-Monolith | Central auth middleware; single point entry | ACID transaction wraps both operations; no distributed complexity | Observer pattern executes locally; immediate notification | No inter-service latency; efficient queries | Deploy one service; simpler pipeline | One database; free tier plans sufficient
-Microservices | Each service can authenticate; requires consistent auth scheme across services | Distributed transactions needed to guarantee atomicity across Request & Audit services; complex and risky | Service decoupling allows independent scaling; but introduces RPC latency | Inter-service HTTP calls add 10-100ms latency per status change; impacts list-view performance (ASR-4) | Requires containerisation, orchestration, multiple CI/CD pipelines; high cognitive overhead for team | Multiple database instances; Premium subscription might be necessary to cover all services
+Monolith (Alternative A) | Central auth middleware; single point entry | ACID transaction wraps both operations; no distributed complexity | Observer pattern executes locally; immediate notification | No inter-service latency; efficient queries | Deploy one service; simpler pipeline | One database; free tier plans sufficient
+Microservices (Alternative B) | Each service can authenticate; requires consistent auth scheme across services | Distributed transactions needed to guarantee atomicity across Request & Audit services; complex and risky | Service decoupling allows independent scaling; but introduces RPC latency | Inter-service HTTP calls add 10-100ms latency per status change; impacts list-view performance (ASR-4) | Requires containerisation, orchestration, multiple CI/CD pipelines; high cognitive overhead for team | Multiple database instances; Premium subscription might be necessary to cover all services
 
 ## Architecture Decision
 **Chosen architecture:** Backend Monolith with Layered Architecture + REST API Boundary
