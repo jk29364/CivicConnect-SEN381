@@ -5,7 +5,6 @@
 
 
 | # | Lifecycle Concern | Why It Matters Now (M1) | What It Influences Later (M2–M4) | Missing Information | Risk of Ignoring |
-
 | :-: | :--- | :--- | :--- | :--- | :--- |
 | **FEC-01** | **Authentication & Authorization Model** | Shapes NFR-002 and enforces distinct privilege boundaries between residents, maintenance staff, and managing agents. | Milestone 2 architecture decomposition and Milestone 3 access-control middleware. | Whether estate staff require fine-grained role tiers (e.g., security patrol vs. plumbing contractors). | Extensive schema and route restructuring if access control is retrofitted onto an open prototype. |
 | **FEC-02** | **Deployment Platform Boundaries** | Free-tier resource limits restrict the realistic concurrency targets we can commit to in our Non-Functional Requirements. | Milestone 2 technology selection and Milestone 4 production operations and costing. | Exact container execution limits and database connection pools of available free-tier cloud hosts. | Overpromising availability metrics that crash during live demo evaluation under load. |
