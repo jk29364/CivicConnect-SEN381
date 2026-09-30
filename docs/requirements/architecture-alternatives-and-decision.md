@@ -128,3 +128,27 @@ Microservices (Alternative B) | Each service can authenticate; requires consiste
 ```
 
 ---
+## 5.5 Technology Stack Selection & Integration
+
+While ADR-ARCH-001 established the structural layering of the system, this section formally evaluates and baselines the specific technologies used to construct those layers.
+
+### ADR-STACK1: Core Technology Stack Selection
+
+| Field | Content |
+|-------|---------|
+| **Status** | Accepted (M2 Baseline) |
+| **Context** | CivicConnect requires a responsive web interface, a backend to handle business logic, and a persistence layer guaranteeing audit trail integrity (NFR-004). The team must select a stack balancing rapid development capabilities against strict zero-cost deployment constraints (Risk R-004). |
+| **Alternatives Considered** | **Alt A (Chosen): Node.js/React + PostgreSQL (Supabase)** — Unified JavaScript ecosystem with robust free-tier relational databases.<br><br>**Alt B (Rejected): Java Web (Spring Boot) + SQL** — Java provides excellent enterprise-grade structural enforcement and naturally supports GoF patterns. However, its verbosity and heavy configuration boilerplate introduce unnecessary friction for a 3-person student team on a strict timeline. <br><br>**Alt C (Rejected): C# .NET Core** — Steeper learning curve for current team skill set, violating risk R-001. |
+| **Decision** | Implement the backend monolith using **Node.js (v24 LTS) with Express.js**. The frontend will be built with **React.js**. The persistence layer will utilize **PostgreSQL (hosted via Supabase)**. |
+| **Rationale** | • **Velocity (Team Capability):** Pivoting away from Java to a unified JavaScript stack eliminates the cognitive load of context-switching between languages, directly mitigating technical stack unfamiliarity (R-001).<br>• **Relational Integrity:** PostgreSQL natively guarantees the atomic integrity required for the ticket status and history lifecycle (NFR-004) to support ASR-2.<br>• **Hosting & Cost:** Supabase free tier provides generous relational limits, directly satisfying the zero-budget hosting constraint (R-004). |
+| **Consequences** | The frontend and backend must be deployed and hosted as separate services (e.g., Render/Vercel for compute, Supabase for data), requiring robust Cross-Origin Resource Sharing (CORS) configuration (Risk R-009). |
+
+### ADR-INT1: Client-Server Integration Boundary
+
+| Field | Content |
+|-------|---------|
+| **Status** | Accepted (M2 Baseline) |
+| **Context** | With a decoupled technology stack (React frontend, Node.js backend), the resident/staff client must communicate with the core engine across a network boundary to submit tickets and retrieve statuses. A standardized integration contract is required. |
+| **Decision** | Implement a **Stateless RESTful API** utilizing JSON payloads over HTTPS. All requests adhere to standard HTTP methods (`GET`, `POST`, `PUT`, `PATCH`, `DELETE`) and return standard status codes. |
+| **Rationale** | Provides a clean, technology-agnostic boundary. If the frontend is ever rewritten as a native mobile app, the backend REST API remains 100% compatible. It also allows isolated API testing via tools like Postman before the UI is finished. |
+| **Consequences** | • Introduces network latency and serialization overhead compared to in-process function calls.<br>• Requires strict stateless authentication (JWT Bearer tokens) passed in the HTTP headers for every request to satisfy NFR-001 and ASR-1. |
