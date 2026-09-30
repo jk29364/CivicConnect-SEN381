@@ -8,4 +8,4 @@
   07: Claude AI was used by Karabo Masoka to aid in the conceptual architecture diagram, and summarising the differences between monolith and microservices to be able to compare in relation to Wonderpark Estates' CivicConnect
   08: Gemini was used by Jimmy with structuring ADR format, summarizing PostgreSQL ACID transaction benefits, and structuring A2 Task 2 persistence research. Technical claims regarding PostgreSQL transactions were cross-referenced with academic textbooks (Elmasri & Navathe, 2016) and official Supabase documentation before inclusion in the PED
   09: Claude AI was used by Karabo Masoka to summarise the Design Problems research and Solutions (Observer and Factory patterns) researched in Assignment 2; and also for the template of the ADR tables for the specific design problems
-  
+  010: Claude AI was used by Karabo Masoka to highlight the different test trace of FR-001 by summarising the direction of trace from Milestone 1 requirements and acceptance criteria to where it will be tested in code.
