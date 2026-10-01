@@ -11,4 +11,4 @@
   10: Claude AI was used by Karabo Masoka to highlight the different test trace of FR-001 by summarising the direction of trace from Milestone 1 requirements and acceptance criteria to where it will be tested in code.
   11: a: Serves as a consolidation of entries 05 through 10 into the PED v2.0.
       b: Gemini was used by Johni Kruger to quickly solve a tabling mistake that caused a surprise merge conflict right before submission
-  
+  12: Gemini was used by Johni Kruger to quickly scan through the requirements in order to extract the exact order all the headers in the PED need to logically be in.
