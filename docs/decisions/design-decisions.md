@@ -1,6 +1,6 @@
 # Initial Design Decisions
 ## Overview
-The two CivicConnect design problems were identified in Assignment 2, which were "Notifying multiple parties/users when a request’s status changes" and "Creating different types of service requests different validation rules". This section records the final Milestone 2 design-pattern decision for each, with evidence of how they will be applied in the architecture and sata layers established in earlier sections/
+The two CivicConnect design problems were identified in Assignment 2, which were "Notifying multiple parties/users when a request’s status changes" and "Creating different types of service requests different validation rules". This section records the final Milestone 2 design-pattern decision for each, with evidence of how they will be applied in the architecture and data layers established in earlier sections/
 
 ## ADR-DP-001: Observer Pattern for Status-Change Notification
 **Design problem 1: Notifying multiple parties/users when a request’s status changes**
@@ -22,10 +22,10 @@ auditService.logStatusChange(request)
 **the core request-handling module becomes tightly coupled to every current consumer. Adding a future SMS notifier or body-corporate reporting feed require modifying the same transactional code path, which violates the Open/Closed Principle and threatening ASR-2**
 
 **Why This Matters:** 
-- **ASR-2 (Immutable History)** is jeopardized: if the Service Layer knows about all consumers, then adding a new consumer means re-touching the status-update 
+- **ASR-2 (Immutable History)** is jeopardized. If the Service Layer knows about all consumers, then adding a new consumer means re-touching the status-update 
 transaction, introducing risk of regression. 
-- **ASR-1 (Centralized RBAC)** is harder to maintain: authorization logic for each consumer becomes dispersed. 
-- **Testability suffers:** testing status-update logic in isolation is impossible ifit directly calls external services. 
+- **ASR-1 (Centralized RBAC)** is harder to maintain. Authorization logic for each consumer becomes dispersed. 
+- **Testability suffers.** Testing status-update logic in isolation is impossible to fit directly calls external services. 
 
 ### A2 Research Evidence - Alternatives 
 **Alternative A (Chosen): Observer Pattern** 
@@ -49,7 +49,7 @@ In CivicConnect:
 
 **Supporting Evidence:** 
 - Gamma et al. (1994): canonical definition and motivation. 
-- McNatt & Bieman (2001): Observer is the most-frequent pattern in their 16-paper industrial dataset—empirical evidence it's a proven, non-exotic solution for this class ofproblem. 
+- McNatt & Bieman (2001): Observer is the most-frequent pattern in their 16-paper industrial dataset—empirical evidence it's a proven, non-exotic solution for this class of problem. 
 - Martin (2000): "We frequently don't want the detector to know about the actor" (Sensor/Meter example, structurally identical to status/notifications).
 
 ### Alternative B (Rejected): Direct/Explicit Method Calls 
@@ -168,8 +168,8 @@ function createRequest(category, payload):
 ```
 
 **Benefits:**
-- Simplest to write: straightforward control flow.
-- No abstraction: fewer classes.
+- Simplest to write; Straightforward control flow.
+- No abstraction; Fewer classes.
 
 **Limitations:**
 - Violates Open/Closed Principle: New categories require modification.
