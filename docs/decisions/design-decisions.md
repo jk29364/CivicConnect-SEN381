@@ -5,29 +5,29 @@ The two CivicConnect design problems were identified in Assignment 2, which were
 ## ADR-DP-001: Observer Pattern for Status-Change Notification
 **Design problem 1: Notifying multiple parties/users when a request’s status changes**
 
-**Problem statement**
+**Problem statement**\
 When a staff member updates a service request's status, several independent concerns must react simultaneously - the resident submitting a request must receive an in-app notification (FR-004), the managing agent's dashboard must update (FR-008), and an immutable, timestamped audit-history record must be appended (NFR-004)
 
-**Couplin risk** - If the Service Layer's status-update logic called each of these consumers directly and explicitly:
+**Coupling risk** - If the Service Layer's status-update logic called each of these consumers directly and explicitly:
 
 **pseudo**
-`\`\`
+```
 function updateStatus(requestId, newStatus): 
 request.status = newStatus 
 notificationService.notifyResident(request) 
 dashboardService.updateCounts(request) 
 auditService.logStatusChange(request) 
-`\`\`
+```
 
-**the core request-handling module becomes tightly coupled to every current consumer. Adding a future SMS notifyer or body-corporate reporting feed require modifying the same transactional code path, which violates the Open/Closed Principle and threatening ASR-2**
+**the core request-handling module becomes tightly coupled to every current consumer. Adding a future SMS notifier or body-corporate reporting feed require modifying the same transactional code path, which violates the Open/Closed Principle and threatening ASR-2**
 
 **Why This Matters:** 
 - **ASR-2 (Immutable History)** is jeopardized: if the Service Layer knows about all consumers, then adding a new consumer means re-touching the status-update 
-transaction, introducing risk ofregression. 
+transaction, introducing risk of regression. 
 - **ASR-1 (Centralized RBAC)** is harder to maintain: authorization logic for each consumer becomes dispersed. 
 - **Testability suffers:** testing status-update logic in isolation is impossible ifit directly calls external services. 
 
-### A2 Research Evidence — Alternatives 
+### A2 Research Evidence - Alternatives 
 **Alternative A (Chosen): Observer Pattern** 
 Gamma et al. (1994) define the Observer pattern as "a one-to-many dependency between objects so that when one object changes state, all its dependents are notified and 
 updated automatically." 
@@ -130,7 +130,7 @@ This creates the same maintenance burden Martin (2000) illustrates with Modem br
 - **Fragility:** Adding a new category (e.g., "Parking Violation") requires finding and modifying this exact conditional—risk of regression.
 - **Violates Open/Closed Principle:** Extension (new category) requires modification (adding a new branch).
 
-## A2 Research Evidence — Alternatives
+## A2 Research Evidence - Alternatives
 
 **Alternative A (Chosen): Factory Pattern**
 
