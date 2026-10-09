@@ -13,4 +13,6 @@
       b: Gemini was used by Johni Kruger to quickly solve a tabling mistake that caused a surprise merge conflict right before submission
   12: Gemini was used by Johni Kruger to quickly scan through the requirements in order to extract the exact order all the headers in the PED need to logically be in.
   13: a: Claude AI was used by Karabo Masoka to help with the file and folder structure, especially for the Observer & Factory scaffolding
-      b: Claude AI was used by Karabo Masoka for the TypeScript files because there is minimal knowledge of TypeScript  
+      b: Claude AI was used by Karabo Masoka for the TypeScript files because there is minimal knowledge of TypeScript 
+
+  15: Claude AI was used by Karabo Masoka with the assistance of the rebalancing the ASRs - AI was used to help with linking the corresponding of the FRs to the NFRs.
