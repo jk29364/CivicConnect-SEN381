@@ -45,7 +45,7 @@
 Architecture | ASR-1 (Auth/RBAC) | ASR-2 (Immutable History) | ASR-3 (Severity Prioritisation) | ASR-4 (Performance) | Schedule | Cost
 | --- | --- | --- | --- | --- | --- | --- |
 Monolith (Alternative A) | Central auth middleware; single point entry | ACID transaction wraps both operations; no distributed complexity | Observer pattern executes locally; immediate notification | No inter-service latency; efficient queries | Deploy one service; simpler pipeline | One database; free tier plans sufficient
-Microservices (Alternative B) | Each service can authenticate; requires consistent auth scheme across services | Distributed transactions needed to guarantee atomicity across Request & Audit services; complex and risky | Service decoupling allows independent scaling; but introduces RPC latency | Inter-service HTTP calls add 10-100ms latency per status change; impacts list-view performance (ASR-4) | Requires containerisation, orchestration, multiple CI/CD pipelines; high cognitive overhead for team | Multiple database instances; Premium subscription might be necessary to cover all services
+Microservices (Alternative B) | Each service can authenticate; requires consistent auth scheme across services | Distributed transactions needed to guarantee atomicity across Request & Audit services; complex and risky | Service decoupling allows independent scaling; but introduces RPC latency | Inter-service HTTP calls add adds network latency per call per status change; impacts list-view performance (ASR-4) | Requires containerisation, orchestration, multiple CI/CD pipelines; high cognitive overhead for team | Multiple database instances; Premium subscription might be necessary to cover all services
 
 ## Architecture Decision
 **Chosen architecture:** Backend Monolith with Layered Architecture + REST API Boundary
@@ -71,6 +71,48 @@ Microservices (Alternative B) | Each service can authenticate; requires consiste
 | **Consequences** <br> (Downstream Effects) | • **Deployment:** One backend service to maintain and monitor; simpler operational complexity. <br> • **Scaling:** Horizontal scaling of the backend requires scaling all components together. If future load isolates to the dashboard or notification logic, independent scaling becomes harder; acceptable for current scope. <br> • **Layer discipline:** The success of this architecture depends on strict adherence to layer boundaries. Violations (API layer reaching directly into Persistence, or Service layer making assumptions about REST representation) will create coupling debt. <br> • **Future multi-tenancy (FEC-1):** If Wonderpark Estates requests multi-tenant support, the monolith's layered structure is already in place for service extraction; however, data isolation (separate databases per tenant vs. row-level filtering) will require additional architectural review at that time. <br> • **Integration with external systems (FEC-7):** If Wonderpark Estates later requires integration with external estate access-control systems, the REST API boundary already supports this. External clients call `/api/requests/...` endpoints; no backend restructuring is needed. |
 | **Related Decisions** | • **ADR-DP-001** (Observer for status-change notification): Leverages monolith's in-process execution model. <br> • **ADR-DP-002** (Factory for request creation): Centralizes category-specific logic within the Service Layer; benefits from monolithic structure. <br> • **ADR-DATA-001** (ACID transactions for status + audit): Core assumption of this architecture; distributed services would require alternative concurrency strategy. <br> • **ADR-INT-001** (REST API for submission interface): Frontend–backend boundary; REST API remains the external contract regardless of internal monolith structure. |
 | **Verification & Evidence (M2)** | ✓ M2 §5.3 Architecture diagrams show API → Service → Persistence layering. <br> ✓ M2 §5.6 Design Decision records (ADR-DP-001, ADR-DP-002) reference this monolith structure. <br> ✓ M2 §5.4 Data & Persistence Baseline includes transaction boundary examples showing status update + audit append wrapped in one BEGIN/COMMIT block. <br> ✓ GitHub repository structure reflects the three layers: `/src/api`, `/src/services`, `/src/persistence`. <br> ✓ Sample code or pseudo-code in M3 demonstrates layer separation and transaction usage. |
+
+## Architecture Decision (ADR-ARCH-001 Revision)
+
+### Decision drivers
+**Driver** | **Source** | **What it demands of the architecture**
+| --- | --- | --- |
+**ASR-2** Status transition integrity (FR-002 & NFR-004) | §5.2 | A status change and its audit record must commit together or not at all, and invalid transactions must be rejected consistently
+**ASR-4** Concurrent request ownership (FR-006) | §5.2 | Two staff members accepting the same request simultaneously must resolve deterministically, using the same version-check mechanism as ASR-2
+**ASR-1** Authenticated access (NFR-001) | §5.2 | One enforcement point for identity and roles across every endpoint
+**ASR-3** Severity prioritisation (FR-011 & NFR-002) | §5.2 | In-process notification of queue and dashboard consumers on status or severity change
+**ASR-5** Filter/Query performance (FR-005 & NFR-005) | §5.2 | Centralised query and index design; NFR-005 target confirmed in §5.5
+**Schedule constraint** | Milestone 2 deadline - to complete within 3-person team | A deployable, testable system that is realistically achievable in the time available
+
+### Alternatives and how each ASR discriminates between them
+**Driver** | **Alt A: Layered monolith (chosen)** | **Alt B: Microservers (rejected)**
+| --- | --- | --- |
+**ASR-2** | One ACID transaction covers status update and audit append | Needs a saga or eventual cosistency; a partial failure can leave a status with no audit, which is the exact failure NFR-004 forbids
+**ASR-4** | Version check implemented once in the Persistence Layer and reused for status and assignment | Concurrency control is duplicated or distibuted across services; the two ASRs would need separate solutions
+**ASR-1** | Single Middleware | Every service must validate tokens consistently
+**ASR-3** | Observer runs in-process | Observer becomes an event bus or message broker (becomes a new infrastructure)
+**ASR-5** | Local queries and one index design | Reporting needs data from several services, which adds joins across a network boundary
+**Schedule** | One deployable, one pipeline | Multiple deployables, container orchestration, per-service CI
+
+### Conclusion and decision
+ASR-2 & ASR-4 have become the decision drivers, because they are the two where microservices create a correctness problem and not just "extra-effort". ASR-1, ASR-3, and ASR-5 favour the monolith but could be solved either way, but with increased work. Schedule favours the monolith and is treated as a real constraint, not as a justification on its own
+Upon final decision, we adopt a **backend monolith with a layered structure** (API → Service → Persistence), with the React frontend as a separately deployed client callit it over REST (reference ADR-INT-001). See ADR-DP-001 and ADR-DP-002 for patterns that depend on the in-process model and ADR-DATA-001 for the transaction boundary.
+
+### Trade-offs accepted
+- **Scaling is coupled** - all of the backend scales together. Acceptable at a single-estate load (reference R-004's free-tier limits apply)
+- **Layered discipline is manual** - in a monolith nothing physically stops the API layer reaching into persistence. Mitigation: layer-boundary check as a PR review item, including folder structure `src/api`, `src/services`, `src/persistence`.
+- **Larger blast radius** - a defect in one component can affect the whole process. Mitigation: unit tests per service (M3 verification plan)
+- **Single deployable means one failure domain** - Acceptable for the stated scope
+
+### Technical debt register
+# | Debt incurred | Interest (what is costs later) | Repayment trigger | Repayment path | 
+| --- | --- | --- | --- | --- | 
+TD-1 | Observer is in-process | Cannot deliver notifications if the process is down, and cannot add an external channel without rework | A second notification channel (SMS, email) is required | Replace the in-process subject with a queue-backend dispatcher; observers keep their interface | 
+TD-2 | Layer boundaries enforced by convention | Boundary erosion makes later extraction expensive | Any PR crossing layers merged without justification | Add lint rule or dependency check in CI |
+TD-3 | Single data model for one complex (NFR-006) | Add a second complex needs tenant isolation, which is hard security work | AWonderpark requests multi-estate support (FEC-1) | Dedicated architectural review; row-level security or schema-per-tenant ecaluation |
+TD-4 | Schedule-driven scope: deployment, API, spec and persistence scripts deferred to Milestone 3 | The Milestone 3 workload is larger, and early decisions are made with less evidence | Milestone 3 planning | Tracked as board items #22 (Data and Persistence Baseline), #25 (Initial API & Integration decision), #26 (Deployment compatibility), and #13 (Auth Boundary Implementation & endpoint submission) |
+TD-5 | Free-tier hosting assumed | Cold starts and limits could breach NFR-005 | NFR-005 measurement in §5.5 fails | Move to a paid tier or a different host |
+
 
 ---
 
