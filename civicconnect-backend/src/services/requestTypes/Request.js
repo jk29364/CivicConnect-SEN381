@@ -1,3 +1,5 @@
+export const SEVERITIES = ['Low', 'Medium', 'High'];
+
 //Base model providing initial structural guarantees (FR-001 & FR-011)
 //subclasses will implement validate()
 
@@ -8,12 +10,21 @@ export class Request {
         this.description = payload.description;
         this.location = payload.location;
         this.submittedBy = payload.submittedBy;
-        this.severity = payload.severity || 'Low';
+        this.severity = payload.severity || 'Low'; //FR-011 default
         this.status = 'New';
         this.createdAt = new Date();
     }
 
+    //Returns list of error messages; empty list means valid
     validate() {
-        throw new Error('validate() must be implemented by subclasses');
+        const errors = [];
+        if (!this.description || !String(this.description).trim()) errors.push('description is required');
+        if (!SEVERITIES.includes(this.severity)) errors.push(`severity must be one of ${SEVERITIES.join(', ')}`);
+        return errors;
     }
+}
+
+export function isValidPastDate(value) {
+    const d = new Date(value);
+    return value != null && !Number.isNaN(d.getTime()) && d <= new Date();
 }
