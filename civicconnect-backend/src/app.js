@@ -1,6 +1,6 @@
-const express = require('express');
-const cors = require('cors');
-require('dotenv').config(); // Loads your .env variables safely
+import express from 'express';
+import cors from 'cors';
+import 'dotenv/config'; // Loads your .env variables safely
 
 // 1. Initialize the Express application
 const app = express();
@@ -30,11 +30,4 @@ app.use((err, req, res, next) => {
     });
 });
 
-// 5. Boot the Server
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-    console.log(`[CivicConnect] Server successfully started on port ${PORT}`);
-});
-
-module.exports = app;
+export default app;
