@@ -2,6 +2,20 @@ import express from 'express';
 import cors from 'cors';
 import 'dotenv/config'; // Loads your .env variables safely
 
+// --- J3: OBSERVER REGISTRATION ---
+// Import your service and observers (adjust paths to match your folder structure)
+import requestService from './services/RequestService.js'; 
+import { DashboardCountsObserver } from './services/observers/DashboardCountsObserver.js';
+// Make sure to import your Audit observer here too!
+// import { AuditHistoryObserver } from './services/observers/AuditHistoryObserver.js';
+
+// Register the observers at service start
+requestService.registerObserver(new DashboardCountsObserver());
+// requestService.registerObserver(new AuditHistoryObserver());
+console.log(' Observers registered at service start');
+// ---------------------------------
+
+
 // 1. Initialize the Express application
 const app = express();
 
