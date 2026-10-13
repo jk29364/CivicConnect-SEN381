@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
-import 'dotenv/config'; // Loads your .env variables safely
+import 'dotenv/config'; // Loads .env variables safely
+import pool from './config/db.js';
+
 
 // --- J3: OBSERVER REGISTRATION ---
 // Import your service and observers (adjust paths to match your folder structure)
@@ -32,6 +34,23 @@ app.get('/api/health', (req, res) => {
         status: 'active', 
         message: 'CivicConnect Core API is securely running.' 
     });
+});
+
+// ... existing health route ...
+
+app.get('/api/requests', async (req, res, next) => {
+    try {
+        // Simulates the dashboard list/filter view (FR-005)
+        const { rows } = await pool.query(`
+            SELECT id, reference_number, category, status, severity, created_at 
+            FROM service_requests 
+            ORDER BY created_at DESC 
+            LIMIT 100
+        `);
+        res.status(200).json(rows);
+    } catch (error) {
+        next(error);
+    }
 });
 
 // 4. Global Error Handler
