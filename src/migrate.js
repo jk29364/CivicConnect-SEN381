@@ -1,5 +1,5 @@
 import fs from 'fs';
-import pool from './src/config/db.js';
+import pool from './config/db.js';
 
 const runMigration = async () => {
     try {
