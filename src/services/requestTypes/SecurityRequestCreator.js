@@ -1,28 +1,11 @@
-import { Request } from './Request.js';
+import { SecurityRequest } from './SecurityRequest.js';
+import { ValidationError } from '../errors.js';
 
-// Specific request object structural class definition
-class SecurityRequest extends Request {
-  constructor(payload) {
-    super(payload);
-    this.incidentTime = payload.incidentTime;
-    this.threatLevel = payload.threatLevel; // Specific structural attribute rule
-  }
-
-  validate() {
-    // Custom validation logic tracking threat parameters limits
-    return !!(this.incidentTime && this.threatLevel);
-  }
-}
-
-/**
- * Creator implementation encapsulating security validation bounds
- */
 export class SecurityRequestCreator {
   create(payload) {
-    const request = new SecurityRequest(payload);
-    if (!request.validate()) {
-      throw new Error("Validation Failed: Incident time and threat level are mandatory for Security requests.");
-    }
+    const request = new SecurityRequest({ ...payload, category: 'Security' });
+    const errors = request.validate();
+    if (errors.length > 0) throw new ValidationError(errors);
     return request;
   }
 }
