@@ -6,7 +6,6 @@ export class MaintenanceRequest extends Request {
     }
     validate() {
         const errors = super.validate();
-        if (!this.location) errors.push ('location is required for Maintenance requests');
         if (!this.faultType) errors.push ('faultType is required for Maintenance requests');
         return errors;
     }

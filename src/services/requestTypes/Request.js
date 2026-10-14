@@ -19,6 +19,7 @@ export class Request {
     validate() {
         const errors = [];
         if (!this.description || !String(this.description).trim()) errors.push('description is required');
+        if (!this.location || !String(this.location).trim()) errors.push('location is required');
         if (!SEVERITIES.includes(this.severity)) errors.push(`severity must be one of ${SEVERITIES.join(', ')}`);
         return errors;
     }
