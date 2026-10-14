@@ -14,9 +14,9 @@
   12: Gemini was used by Johni Kruger to quickly scan through the requirements in order to extract the exact order all the headers in the PED need to logically be in.
   13: a: Claude AI was used by Karabo Masoka to help with the file and folder structure, especially for the Observer & Factory scaffolding
       b: Claude AI was used by Karabo Masoka for the TypeScript files because there is minimal knowledge of TypeScript 
-  14: Gemini was used by Johni Kruger to draft fromatting considerations for tech stack decision to fit in with project requirements.
+  14: Gemini was used by Johni Kruger to draft formatting considerations for tech stack decision to fit in with project requirements.
   15: Claude AI was used by Karabo Masoka with the assistance of the rebalancing the ASRs - AI was used to help with linking the corresponding of the FRs to the NFRs.
   16: Claude AI was used by Karabo Masoka to assist in highlighting the main drivers in the decision taken of choosing the layered monolith - the AI was used to bring the corresponding research of the ASRs and highlight the main drivers within all 5 ASRs.
-  17: Claude AI was used by Karabo Masoka in the assistance of improving the package.json: dependencies pruned to express, cors, dotenv, pg. Furthermore, it helped in converting app.js to ESM. 
-
+  17: Claude AI was used by Karabo Masoka in the assistance of improving the package.json: dependencies pruned to express, cors, dotenv, pg. Furthermore, it helped in converting app.js to ESM.
+  18: Gemini was used by Johni Kruger to help revise the initial auth.middleware.js verification stub into a hopefully release-ready, environment-driven security layer.
   19: Claude AI was used by Karabo Masoka to help with the testing of the requestTypes for the Factory - Claude AI drafted the test code and was placed in a mock script: smoke-factory.mjs. The smoke-factory.mjs was deleted because they were checks for the PR, not product code.
