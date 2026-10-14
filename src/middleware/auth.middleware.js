@@ -9,15 +9,27 @@ import jwt from 'jsonwebtoken';
  */
 export const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; 
-
-    // Acceptance: No token = 401 Unauthorized
-    if (!token) {
+    
+    // 1. Acceptance Criteria: No token header at all = 401 Unauthorized
+    if (!authHeader) {
         return res.status(401).json({
             error: 'Unauthorized',
             message: 'Access denied. No authentication token provided.'
         });
     }
+
+    // Split the header ("Bearer <token>")
+    const parts = authHeader.split(' ');
+
+    // 2. Acceptance Criteria: Malformed structure (e.g., missing "Bearer" prefix or missing token part) = 403 Forbidden
+    if (parts.length !== 2 || parts[0] !== 'Bearer') {
+        return res.status(403).json({
+            error: 'Forbidden',
+            message: 'Invalid token format. Expected "Bearer <token>".'
+        });
+    }
+
+    const token = parts[1];
 
     try {
         const secret = process.env.JWT_SECRET;
@@ -26,20 +38,18 @@ export const authenticateToken = (req, res, next) => {
             return res.status(500).json({ error: 'Internal Server Error' });
         }
 
-        // Verify token using the secret extracted from .env
         const decoded = jwt.verify(token, secret);
-        
-        // Attach the validated user details to the request object. Assumes that jwt.verify returns id and role upon successful verification.
         req.user = decoded; 
         next();
     } catch (error) {
-        // Acceptance: Invalid/Expired token = 403 Forbidden
+        // 3. Acceptance Criteria: Fake, tempered, or expired token = 403 Forbidden
         return res.status(403).json({
             error: 'Forbidden',
             message: 'Invalid or expired token.'
         });
     }
 };
+
 
 /**
  * Higher-order middleware to enforce role-based access control.
