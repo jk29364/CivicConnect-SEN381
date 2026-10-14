@@ -1,7 +1,17 @@
-const authenticateToken = (req, res, next) => {
+import jwt from 'jsonwebtoken';
+
+/**
+ * Middleware to authenticate incoming JWT tokens from the Authorization header.
+ * Satisfies NFR-001/ASR-1 
+ * Acceptance Criteria: No Token = 401, Invalid Token = 403.
+ * 
+ * No easy way to test this unfortunately, unless I'm mistaken, in which case please let me know and request changes on review.
+ */
+export const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1]; 
 
+    // Acceptance: No token = 401 Unauthorized
     if (!token) {
         return res.status(401).json({
             error: 'Unauthorized',
@@ -10,10 +20,20 @@ const authenticateToken = (req, res, next) => {
     }
 
     try {
-        // Simulating a decoded token for M2 development
-        req.user = { id: 'resident_123', role: 'resident' };
+        const secret = process.env.JWT_SECRET;
+        if (!secret) {
+            console.error('CRITICAL: JWT_SECRET environment variable is missing.');
+            return res.status(500).json({ error: 'Internal Server Error' });
+        }
+
+        // Verify token using the secret extracted from .env
+        const decoded = jwt.verify(token, secret);
+        
+        // Attach the validated user details to the request object. Assumes that jwt.verify returns id and role upon successful verification.
+        req.user = decoded; 
         next();
     } catch (error) {
+        // Acceptance: Invalid/Expired token = 403 Forbidden
         return res.status(403).json({
             error: 'Forbidden',
             message: 'Invalid or expired token.'
@@ -21,4 +41,19 @@ const authenticateToken = (req, res, next) => {
     }
 };
 
-export default authenticateToken;
+/**
+ * Higher-order middleware to enforce role-based access control.
+ * Acceptance: Wrong role = 403 Forbidden
+ * @param {string[]} allowedRoles - Array of roles allowed to access the route (e.g., ['admin', 'official'])
+ */
+export const requireRole = (allowedRoles) => {
+    return (req, res, next) => {
+        if (!req.user || !allowedRoles.includes(req.user.role)) {
+            return res.status(403).json({
+                error: 'Forbidden',
+                message: 'Access denied. You do not have the required permissions for this action.'
+            });
+        }
+        next();
+    };
+};
