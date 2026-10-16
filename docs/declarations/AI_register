@@ -23,6 +23,6 @@
   20: Gemini was used by Jimmy Junior Baloyi to structure the Data and persitence baseline 
   21: Claude AI was used by Karabo Masoka to help create a template of the Expected Test Results Table (Table A) and the Actual Results table (after Table A & npm run test). Furthermore, Claude AI was used to help reference the necessary FRs and ASRs linked in the testing
   22: Gemini was used to assist in architecting the PostgreSQL database schema, implement the Node.js atomic transaction logic with optimistic concurrency control as well as with drafting test scripts
-  23: Gemini was used by Jimmy Junior to structure the risk register and keep track of changes made during testing.
+  25: Gemini was used by Jimmy Junior to structure the risk register and keep track of changes made during testing.
 
   
