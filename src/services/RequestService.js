@@ -1,48 +1,76 @@
-/**
- * ADR-DP-001: Observer Pattern for Status-Change Notification
- * Maintains the list of active listeners and broadcasts status transitions synchronously.
- */
-export class RequestService {
-  constructor() {
-    this.observers = []; // Array tracking active Observer objects
-  }
+// src/services/RequestService.js
+// Changed from require() to import
+import pool from '../config/db.js'; 
 
-  /**
-   * Register a new listener at service initialization
-   * @param {Object} observer 
-   */
-  registerObserver(observer) {
-    if (!observer || typeof observer.update !== 'function') {
-      throw new Error('Invalid observer implementation: update method required');
+const VALID_TRANSITIONS = {
+    'New': ['Assigned', 'Closed'],
+    'Assigned': ['InProgress', 'New', 'Closed'],
+    'InProgress': ['Resolved'],
+    'Resolved': ['Closed', 'InProgress'],
+    'Closed': [] 
+};
+
+class RequestService {
+    constructor() {
+        this.observers = [];
     }
-    this.observers.push(observer);
-  }
 
-  /**
-   * Broadcast status change out to all decoupled observers
-   */
-  notifyObservers(request, oldStatus, newStatus) {
-    for (const observer of this.observers) {
-      // Pass context uniformly without accessing internal Service logic
-      observer.update(request, oldStatus, newStatus);
+    registerObserver(observer) {
+        this.observers.push(observer);
     }
-  }
 
-  /**
-   * Core request engine method handling staff workflow status transitions (FR-002)
-   */
-  async updateStatus(requestId, newStatus) {
-    // 1. Fetch request from database inside a transactional boundary (ADR-DATA-001)
-    // 2. Validate state machine transition safety rules 
-    
-    const request = { id: requestId, status: 'New' }; // Mock instance retrieval
-    const oldStatus = request.status;
-    request.status = newStatus; // Apply structural modification
-    
-    // 3. Synchronously broadcast status context out to listeners
-    this.notifyObservers(request, oldStatus, newStatus);
-    
-    // 4. Commit database transaction safely
-    return request;
-  }
+    async updateStatus(requestId, newStatus, currentVersion, userId) {
+        const client = await pool.connect();
+        try {
+            await client.query('BEGIN');
+
+            const { rows } = await client.query(
+                'SELECT status, version FROM service_requests WHERE id = $1 FOR UPDATE',
+                [requestId]
+            );
+
+            if (rows.length === 0) throw new Error('Request not found.');
+
+            const currentStatus = rows[0].status;
+
+            if (!VALID_TRANSITIONS[currentStatus].includes(newStatus)) {
+                throw new Error(`Invalid transition from ${currentStatus} to ${newStatus}`);
+            }
+
+            if (rows[0].version !== currentVersion) {
+                throw new Error('Stale update: The request was modified by another user.');
+            }
+
+            const updateResult = await client.query(
+                `UPDATE service_requests 
+                 SET status = $1, version = version + 1, updated_at = NOW() 
+                 WHERE id = $2 AND version = $3 
+                 RETURNING *`,
+                [newStatus, requestId, currentVersion]
+            );
+
+            if (updateResult.rowCount === 0) throw new Error('Concurrency conflict during update.');
+
+            for (const observer of this.observers) {
+                await observer.update({
+                    client,
+                    requestId, 
+                    oldStatus: currentStatus, 
+                    newStatus, 
+                    userId
+                });
+            }
+
+            await client.query('COMMIT');
+            return updateResult.rows[0];
+        } catch (error) {
+            await client.query('ROLLBACK');
+            throw error; 
+        } finally {
+            client.release();
+        }
+    }
 }
+
+// Changed from module.exports to export default
+export default new RequestService();
