@@ -7,7 +7,7 @@ This RESTful boundary provides structural longevity: if the web-responsive clien
 
 Furthermore, this selection directly aligns with team capability and schedule risk mitigation. The developer team possesses substantial prior experience and higher comfort levels with RESTful integration patterns compared to distributed messaging protocols or RPC frameworks. Given the fixed, non-extendable academic delivery window for Milestone 2 and downstream construction phases, leveraging a highly familiar communication pattern ensures rapid interface baseline stabilization without risking development bottlenecks or configuration delays.
 
-![API bounday diagram](api-boundary-diagram-1.svg)
+![API bounday diagram](api-boundary-diagram.svg)
 
 ### All network data transactions exchange strict JSON payloads over HTTPS. The initial core endpoints supporting the baselined Milestone 2 ticketing features are structured as follows:
 - `POST /api/requests` (Submit Service Request)

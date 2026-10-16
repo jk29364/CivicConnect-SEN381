@@ -24,7 +24,7 @@ To ensure objective selection, candidate components were assessed against six co
 
 # Structural Topology & Tooling Specifications
 
-![diagram](tech-stack-topology-diagram-1.svg)
+![diagram](tech-stack-topology-diagram.svg)
 
 ## Versioning, Compatibility, & Dependency Controls
 - **Runtime Stability Target**: Node.js v24.x LTS is selected over odd-numbered current releases to guarantee a stable security patch lifecycle and continuous ecosystem support stretching past the project's evaluation timeline.
@@ -37,7 +37,7 @@ To ensure objective selection, candidate components were assessed against six co
 - **API Boundary Verification**: Decoupled HTTP interface endpoints are validated programmatically prior to interface completion using Supertest assertions.
 
 
-# Architectural Trade-offs & Structural Mitigations
+## Architectural Trade-offs & Structural Mitigations
 
 
 | Item | Trade-off | Mitigation |
