@@ -1,11 +1,10 @@
 ### 5.4 Data & Persistence ###
 This section finalizes the physical data model, transaction boundaries, and integrity rules deployed to the Supabase PostgreSQL production environment. The design strictly enforces ASR-2 (Immutable History) and implements safeguards for concurrent data access.
 
-5.4.1 Core Entities and Physical Schema
+## 5.4.1 Core Entities and Physical Schema
 The database relies on three core entities linked via strict foreign key constraints. To satisfy ASR-1 (RBAC) and ASR-3 (Severity Prioritization), enum constraints are enforced directly at the database level. To satisfy NFR-006 (Multi-tenancy preparation), all core records associate with a complex_id.
 
-###SQL####
-
+```SQL
 -- Enums for strict constraint validation (ASR-1, ASR-3)
 CREATE TYPE severity_level AS ENUM ('Low', 'Medium', 'High');
 CREATE TYPE request_status AS ENUM ('New', 'Assigned', 'InProgress', 'Resolved', 'Closed');
@@ -49,20 +48,20 @@ CREATE TABLE RequestHistory (
 -- Performance Indexes (ASR-4)
 CREATE INDEX idx_severity ON ServiceRequest(severity);
 CREATE INDEX idx_status ON ServiceRequest(status);
+```
 
 
-
-5.4.2 ACID Transaction Boundaries & State Transitions
+## 5.4.2 ACID Transaction Boundaries & State Transitions
 (FR-002)
 To guarantee the immutable history audit trail (ASR-2), a request's status update and its corresponding history log entry must never exist in a partial state. The application executes these changes within a single atomic PostgreSQL transaction.   Furthermore, to prevent lost updates when multiple staff members access the same ticket (ASR-4 resilience), the system utilizes Optimistic Concurrency Control (OCC) via the version column.   Transaction Execution Flow:Begin Transaction: BEGIN;Version Check & Update: The ServiceRequest is updated to the new_status, and the version integer is incremented by 1, only if the version matches the client's expected version. If the version check fails (0 rows affected), the update is rejected as stale.   Audit Append: A new row is inserted into RequestHistory logging the old_status, new_status, and the changed_by actor.   Commit: COMMIT; (If any step fails, ROLLBACK executes, leaving no partial data).
 
-5.4.3 Data Integrity & Cascade RulesRestrict User Deletion: 
+## 5.4.3 Data Integrity & Cascade RulesRestrict User Deletion: 
 The ON DELETE RESTRICT constraint on the submitted_by and changed_by foreign keys prevents the deletion of a User if they are tied to historical tickets, maintaining the integrity of the body corporate audit trail.Strict State Transitions: The application logic enforces that status changes adhere strictly to the defined flow (e.g., a "Closed" ticket cannot revert to "New"). An invalid transition triggers an immediate transaction rollback.   
 
-5.4.4 Backup & Disaster Recovery (FEC-07 Resolution)
+## 5.4.4 Backup & Disaster Recovery (FEC-07 Resolution)
 Milestone 1 flagged the need for data migration and disaster recovery (FEC-07). By baselining Supabase PostgreSQL, this concern is resolved through managed cloud infrastructure. Supabase automatically provisions daily automated backups and allows for Point-in-Time Recovery (PITR) for the database. This guarantees that baseline seed data and production audit records are shielded from irrecoverable loss without requiring custom backup scripting from the engineering team.   Once you have this pasted into your PED, you have officially documented Tasks J1 and J2. What is the next logical target for tonight—drafting the actual SQL migration files, or writing the Node.js function that executes that transaction block?
 
-### ADR-DATA-001: Persistence Strategy for Category-Specific Fields
+## ADR-DATA-001: Persistence Strategy for Category-Specific Fields
 
 | Field | Content |
 |-------|---------|
