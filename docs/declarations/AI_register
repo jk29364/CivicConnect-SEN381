@@ -25,3 +25,4 @@
   22: Gemini was used by Jimmy Junio Baloyi to assist in architecting the PostgreSQL database schema, implement the Node.js atomic transaction logic with optimistic concurrency control as well as with drafting test scripts.
   23: Gemini was used by Johni Kruger to create a first framework draft to write up the initial API integration decision into the documentation.
   24: Claude AI was used by Karabo Masoka to help summarise the tests of the RequestFactory.js, which further helped to log what passed and what didn't pass.
+  25: Gemini was used by Jimmy Junior to structure the risk register and keep track of changes made during testing.
