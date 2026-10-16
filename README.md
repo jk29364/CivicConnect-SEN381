@@ -16,6 +16,5 @@ CivicConnect replaces Wonderpark Estates' fragmented WhatsApp and logbook fault-
 1. **Clone the repository:**
    ```bash
    git clone https://github.com/jk29364/CivicConnect-SEN381
-   cd civicconnect-backend
 
    npm install
