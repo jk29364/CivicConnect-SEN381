@@ -221,7 +221,7 @@ export default function serviceRequestsDashboard() {
                       </span>
                       <span className="text-[#b5cbcb]/40">/</span>
                       <span className="text-[10px] font-bold uppercase tracking-widest text-[#b5cbcb]/70">
-                        ZONE 04 LOGISTICS
+                        Wonderpark Park estate
                       </span>
                     </div>
                     <h1 className="font-['Poiret_One'] text-[56px] leading-[64px] tracking-wider text-[#f2dcf1]">
@@ -662,7 +662,7 @@ export default function serviceRequestsDashboard() {
 
                 {/* Architectural Presence Image 1 */}
                 <div className="relative rounded-xl overflow-hidden shadow-lg group h-44 lg:h-auto">
-                  <img src="https://ui-avatars.com/api/?name=Elena+Vance&background=fe571e&color=fff" alt="Profile" className="..." />
+                  <img  src="https://picsum.photos/seed/civic1/600/400" alt="Profile" className="..." />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#160a18] via-[#160a18]/40 to-transparent p-4 flex flex-col justify-end">
                     <span className="text-[10px] uppercase tracking-widest text-[#ffb59f] font-bold">
                       Penthouse Tower 1
@@ -675,7 +675,7 @@ export default function serviceRequestsDashboard() {
 
                 {/* Architectural Presence Image 2 */}
                 <div className="relative rounded-xl overflow-hidden shadow-lg group h-44 lg:h-auto">
-                  <img src="https://ui-avatars.com/api/?name=Elena+Vance&background=fe571e&color=fff" alt="Profile" className="..." />
+                  <img src="https://picsum.photos/seed/civic2/600/400"/>
                   <div className="absolute inset-0 bg-gradient-to-t from-[#160a18] via-[#160a18]/40 to-transparent p-4 flex flex-col justify-end">
                     <span className="text-[10px] uppercase tracking-widest text-[#ffb3ae] font-bold">
                       East Shaft Array
