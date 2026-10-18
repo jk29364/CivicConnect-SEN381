@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 
-export default function serviceRequestsDashboard() {
+export default function ServiceRequestsDashboard() {
   // Data
   const [requests, setRequests] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
