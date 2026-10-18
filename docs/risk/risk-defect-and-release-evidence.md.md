@@ -1,5 +1,44 @@
 # Milestone 3 Documentation Contributions
 
+## Finalisation defect and release review dated 18 October 2026
+
+Historical defect closures and release logs below remain preserved. The following
+new review items concern the inspected backend revision
+`93ce4a82a196411ed25b613924c35d32c0cc8619` and require final team disposition.
+Missing original features are tracked through the PED scope/RTM, rather than
+being silently reclassified as approved scope removals.
+
+| ID | Severity / priority | Observation and consequence | Disposition and verification |
+| :--- | :--- | :--- | :--- |
+| DEF-FIN-01 | Medium / High for DB evidence | `src/db/seed.js` imports `../src/config/db.js` from inside `src/db`, which resolves to nonexistent `src/src/config/db.js`. The current seed script cannot reproduce its reported run unchanged. | Open; correct the relative import and verify only against a designated test database. No seed execution was performed by this review. Owner: existing persistence portfolio. |
+| DEF-FIN-02 | High / High for integrity assurance | `src/db/tc-db.js` uses a dummy actor and treats any exception as passing negative evidence. It does not assert stored history or rollback state. | Open; use valid fixtures, assert expected errors and inspect committed/rolled-back records. Mocked tests support logic but do not repair live evidence. Owner: existing persistence portfolio. |
+| DEF-FIN-03 | High / High for evidence accuracy | PED records login/admin PASS results for routes absent from the inspected app; it also overstates API timing as complete browser acceptance. | Open in the Word PED; corrective qualifications supplied in the closure. Identify historical tested revision or remove those results from current acceptance credit. Owner: team documentation review. |
+| DEF-FIN-04 | Medium / Medium | README instructs copying `.env.example`, but that file is absent. Fresh setup instructions are incomplete. | Open; supply a secret-free example or document exact variable names and safe configuration steps. Owner: team integration review. |
+
+### Existing risk disposition
+
+| Existing ID | Review result |
+| :--- | :--- |
+| RSK-M3-01 | Status OCC and conflict cases exist and pass mocked tests. Real assignment concurrency is not implemented and is not covered by this mitigation. |
+| RSK-M3-02 | Audit insertion uses the transaction client; rollback on observer failure passes a mocked test. Actual persisted atomicity needs stronger live verification. |
+| RSK-M3-03 | Schema/index scripts reduce configuration drift but provide no migration ledger or automatic rollback. Retained rather than closed. |
+
+### Verification and release position
+
+The 18 October rerun of `npm test` passed 42/42 checks. See
+`docs/testing-tables/2026-10-18-final-review-verification.md` for group counts
+and boundaries. No live database, browser performance or integrated frontend
+acceptance was verified during this documentation review.
+
+Local demonstration is planned. The inspected baseline is recommended **no-go
+for production** because integrated identity/live acceptance remain unverified,
+database certificate verification is disabled, and original ownership/reporting
+commitments remain incomplete. Final team adoption and the actual environment
+must be stated in the continuing PED. Historical test logs below are not a
+blanket approval of the current final build.
+
+## Historical Milestone 3 record
+
 
 **Portfolio:** Data, Persistence, Risk, and Reliability
 

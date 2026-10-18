@@ -1,5 +1,31 @@
 # 2. Initial Project Risk Register (Wonderpark Estates)
 
+## Finalisation review dated 18 October 2026
+
+The original entries below are retained as project history. This dated review
+qualifies their current treatment for the inspected backend revision
+`93ce4a82a196411ed25b613924c35d32c0cc8619`; it does not certify uninspected frontend
+work or a production release. Existing owners remain accountable.
+
+| Existing ID | Review disposition | Evidence and remaining action |
+| :--- | :--- | :--- |
+| R-001 | Mitigated for the inspected backend; retained | Shared JavaScript runtime and 42 passing automated tests support component delivery. Frontend integration must still be completed. |
+| R-002 | Open; production release concern | JWT/role checks and service scoping exist, but the full identity flow is not established. Database TLS disables certificate verification. Confirm final client access isolation and configuration. |
+| R-003 | Retained for final human review | Individual contribution and workload must be supported by authentic commits, issues and reviews; no assessment of uninspected PR history is invented. |
+| R-004 | Retained; cloud assumptions unvalidated | Local demonstration is planned. No measured hosted capacity, current tier entitlement or operating-cost result is claimed. |
+| R-005 | Mitigated through existing declarations; residual review responsibility retained | AI register and signed declarations exist in `docs/declarations/`, including items 24–26. Current documentation support adds another entry; its team verification/approval remains pending. |
+| R-006 | Active integration issue at review | Frontend work is ongoing. Current routes use `/api/requests`, status values include `InProgress`, and token issuance is not implemented here. Record final integrated acceptance results. |
+| R-007 | Retained until defence | Each member must trace an authentic requirement and explain the combined product, decisions and limitations. Preparation is not recorded as completed without team confirmation. |
+| R-008 | Open | Creation accepts severity, but no staff severity-edit operation is exposed. Do not claim implemented triage/reclassification. |
+| R-009 | Open configuration concern | Active app uses unrestricted `cors()`, not the documented origin allow-list. Verify the intended client integration and restrict origins before public release; CORS is not authentication. |
+
+The recommended position for the inspected baseline is local evaluation only
+and no-go for production until the specific release concerns are resolved.
+Team adoption and final environment details are recorded in the PED closure.
+This decision does not remove incomplete scope from the original baseline.
+
+## Historical register
+
 *Scoring Model: Likelihood (Low, Med, High), Impact (Low, Med, High), Priority (Low, Med, High, Critical).*
 
 | Risk ID | Risk Description | Root Cause | Probability | Impact | Priority | Mitigation Strategy | Contingency Plan | Owner | Status |
