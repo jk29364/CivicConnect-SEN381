@@ -1,66 +1,47 @@
 import express from 'express';
 import cors from 'cors';
-import 'dotenv/config'; // Loads .env variables safely
-import pool from './config/db.js';
-
-
-// --- J3: OBSERVER REGISTRATION ---
-// Import your service and observers (adjust paths to match your folder structure)
-import requestService from './services/RequestService.js'; 
+import 'dotenv/config';
+import requestService from './services/RequestService.js';
 import { DashboardCountsObserver } from './services/observers/DashboardCountsObserver.js';
-// Make sure to import your Audit observer here too!
-// import { AuditHistoryObserver } from './services/observers/AuditHistoryObserver.js';
+import { authenticateToken, requireRole } from './middleware/auth.middleware.js';
+import requestController from './middleware/request.controller.js';
 
-// Register the observers at service start
-requestService.registerObserver(new DashboardCountsObserver());
-// requestService.registerObserver(new AuditHistoryObserver());
-console.log(' Observers registered at service start');
-// ---------------------------------
-
-
-// 1. Initialize the Express application
 const app = express();
+app.use(cors());
+app.use(express.json());
 
-// 2. Middleware Pipeline
-// CORS prevents browsers from blocking your React frontend from talking to this backend
-app.use(cors()); 
-// express.json() tells the server to accept and parse incoming JSON data (like ticket submissions)
-app.use(express.json()); 
+// The audit observer is always present in RequestService; this observer handles
+// future dashboard cache invalidation without duplicating audit entries.
+requestService.registerObserver(new DashboardCountsObserver());
 
-// 3. Health Check Route
-// A simple endpoint to prove the server is alive and routing correctly
 app.get('/api/health', (req, res) => {
-    res.status(200).json({ 
-        status: 'active', 
-        message: 'CivicConnect Core API is securely running.' 
+    res.status(200).json({
+        status: 'active',
+        message: 'CivicConnect Core API is securely running.'
     });
 });
 
-// ... existing health route ...
+// FR-001/FR-010: resident submission; JWT identity is the source of submittedBy.
+app.post('/api/requests', authenticateToken, requireRole(['Resident']),
+    (req, res) => requestController.createRequest(req, res));
 
-app.get('/api/requests', async (req, res, next) => {
-    try {
-        // Simulates the dashboard list/filter view (FR-005)
-        const { rows } = await pool.query(`
-            SELECT id, reference_number, category, status, severity, created_at 
-            FROM service_requests 
-            ORDER BY created_at DESC 
-            LIMIT 100
-        `);
-        res.status(200).json(rows);
-    } catch (error) {
-        next(error);
-    }
-});
+// FR-005: authorised, estate-scoped list/filter/sort and request detail.
+app.get('/api/requests', authenticateToken, requireRole(['Resident', 'Staff', 'Agent']),
+    (req, res) => requestController.getRequests(req, res));
+app.get('/api/requests/:id', authenticateToken, requireRole(['Resident', 'Staff', 'Agent']),
+    (req, res) => requestController.getRequestById(req, res));
 
-// 4. Global Error Handler
-// Catches any crashes in your routes so the server doesn't shut down completely
+// FR-002/NFR-004: status changes use optimistic concurrency and transactional audit.
+app.put('/api/requests/:id/status', authenticateToken, requireRole(['Staff', 'Agent']),
+    (req, res) => requestController.updateStatus(req, res));
+
 app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({
-        error: 'Internal Server Error',
-        message: 'Something went wrong on the backend.'
-    });
+    if (res.headersSent) return next(err);
+    if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+        return res.status(400).json({ error: 'ValidationError', message: 'Invalid JSON body' });
+    }
+    console.error('Unhandled API error:', err);
+    return res.status(500).json({ error: 'Internal Server Error' });
 });
 
 export default app;

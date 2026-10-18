@@ -1,9 +1,8 @@
-/**
- * Concrete Observer handling resident interface updates (FR-004)
- */
+/** FR-004: Future notification integration point; no transport exists yet. */
 export class ResidentNotificationObserver {
-  update(request, oldStatus, newStatus) {
-    console.log(`[Notification Engine] Alerting Resident: Request ${request.id} shifted from ${oldStatus} to ${newStatus}.`);
-    // Query notificationService API hook here
-  }
+    async update({ requestId, newStatus }) {
+        // Intentionally no notification sent: messaging provider not implemented.
+        void requestId;
+        void newStatus;
+    }
 }
