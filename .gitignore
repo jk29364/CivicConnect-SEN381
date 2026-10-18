@@ -3,6 +3,7 @@ node_modules/
 
 # Environment variables (Security)
 .env
+.env.local
 
 # npm logs
 npm-debug.log*
