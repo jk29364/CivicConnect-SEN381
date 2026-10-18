@@ -26,3 +26,4 @@
   23: Gemini was used by Johni Kruger to create a first framework draft to write up the initial API integration decision into the documentation.
   24: Claude AI was used by Karabo Masoka to help summarise the tests of the RequestFactory.js, which further helped to log what passed and what didn't pass.
   25: Gemini was used by Jimmy Junior to structure the risk register and keep track of changes made during testing.
+  26: ChatGPT was used by Johni Kruger to scaffold a layout and checklist to implement relevant changes and additions for affected issue.

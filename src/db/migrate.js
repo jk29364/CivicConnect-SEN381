@@ -1,20 +1,22 @@
-import fs from 'fs';
-import pool from '../src/config/db.js';
+import fs from 'node:fs/promises';
+import pool from '../config/db.js';
 
-const runMigration = async () => {
-    try {
-        console.log('Sending schema to Supabase...');
-        
-        // Ensure this path matches exactly where you saved the SQL script earlier
-        const sql = fs.readFileSync('./src/db/001-initial_schema.sql', 'utf8'); 
-        
-        await pool.query(sql);
-        console.log('✅ Database tables and enums created successfully!');
-    } catch (err) {
-        console.error('❌ Migration failed:', err.message);
-    } finally {
-        pool.end();
+// Run with `npm run db:migrate` on a fresh database, or
+// `npm run db:indexes` on an already-initialised database.
+const files = process.argv.includes('--indexes-only')
+    ? ['002-request-filter-indexes.sql']
+    : ['001-initial_Schema.sql', '002-request-filter-indexes.sql'];
+
+try {
+    for (const file of files) {
+        const path = new URL(`./${file}`, import.meta.url);
+        console.log(`Applying ${file}...`);
+        await pool.query(await fs.readFile(path, 'utf8'));
     }
-};
-
-runMigration();
+    console.log('Database migrations applied.');
+} catch (error) {
+    console.error('Database migration failed:', error);
+    process.exitCode = 1;
+} finally {
+    await pool.end();
+}

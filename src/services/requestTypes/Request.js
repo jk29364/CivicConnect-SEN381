@@ -10,7 +10,7 @@ export class Request {
         this.description = payload.description;
         this.location = payload.location;
         this.submittedBy = payload.submittedBy;
-        this.severity = payload.severity || 'Low'; //FR-011 default
+        this.severity = payload.severity ?? 'Low'; //FR-011 default
         this.status = 'New';
         this.createdAt = new Date();
     }

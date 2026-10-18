@@ -14,7 +14,7 @@ export default function serviceRequestsDashboard() {
   const [isExported, setIsExported] = useState(false);
   const [formData, setFormData] = useState({
     location: '',
-    category: 'HVAC System',
+    category: 'Plumbing',
     severity: 'Critical',
     brief: '',
   });
@@ -413,11 +413,11 @@ export default function serviceRequestsDashboard() {
                       onChange={(e) => setSelectedCategory(e.target.value)}
                     >
                       <option value="ALL">All Categories</option>
-                      <option value="HVAC">HVAC System</option>
-                      <option value="Elevator">Elevator / Transit</option>
-                      <option value="Electrical">Electrical Surge</option>
-                      <option value="Plumbing">Plumbing</option>
-                      <option value="Access">Access Control</option>
+                      <option value="HVAC">Plumbing</option>
+                      <option value="Elevator">Electrical</option>
+                      <option value="Electrical">Security Gates</option>
+                      <option value="Plumbing">Common Area</option>
+                      <option value="Access">Lost Property</option>
                       <option value="Structural">Structural Glazing</option>
                       <option value="Fire">Fire & Safety</option>
                     </select>
