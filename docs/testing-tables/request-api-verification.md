@@ -25,11 +25,18 @@ This separation avoids falsely claiming DB persistence from mock-only tests.
 | PUT stale | Older version | ConflictError/409; rollback | Service + HTTP |
 | PUT unauthorised | Resident JWT | 403 | HTTP |
 
-**Verification performed in the working environment:**
-23/23 controller and service unit tests passed using Node 22 and a temporary
-stub only for package loading (PostgreSQL operations were simulated by the
-injected fake database). The HTTP tests require the project's npm packages
-and could not be run in this working environment because registry requests
-failed with DNS `EAI_AGAIN`. Run `npm ci && npm test` in an environment with
-access to npm and record the actual HTTP results. No live Supabase query was
-performed, so SQL correctness and performance still require integration testing.
+**Historical verification:**
+The earlier working environment passed 23/23 controller and service tests using
+Node 22 and a temporary package-loading stub. HTTP execution was then blocked
+by registry DNS errors. This limitation describes that earlier run only.
+
+**Updated verification, 18 October 2026:**
+The existing `npm test` suite passed **42/42 tests**, including 9 HTTP,
+9 controller, 14 service and 10 Factory tests. The HTTP suite uses actual
+Express with a mocked service; the service suite uses an injected fake database.
+The initial HTTP attempt was blocked by local connection permissions; all tests
+passed on the permitted rerun without a code change. See
+[the dated execution summary](2026-10-18-final-review-verification.md).
+No live Supabase query or frontend E2E journey was executed during this review;
+actual SQL execution, persisted data, browser acceptance and performance require
+their own evidence against the final integrated revision.
