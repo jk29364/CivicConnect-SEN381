@@ -1,108 +1,17 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 
-// Type definitions
-/*interface RequestService {
-  id: string;
-  ref: string;
-  category: string;
-  categoryIcon: string;
-  location: string;
-  building: string;
-  severity: 'Critical' | 'High' | 'Medium' | 'Low';
-  status: 'New Alert' | 'In Progress' | 'Under Review' | 'Dispatched' | 'Scheduled' | 'Closed';
-  date: string;
-}
-*/
-const INITIAL_REQUESTS = [
-  {
-    id: '1',
-    ref: '#SR-9042',
-    category: 'HVAC System',
-    categoryIcon: 'hvac',
-    location: 'Penthouse B',
-    building: 'Tower 1 Primary',
-    severity: 'Critical',
-    status: 'New Alert',
-    date: 'Oct 24, 2024 · 10:14 AM',
-  },
-  {
-    id: '2',
-    ref: '#SR-9041',
-    category: 'Elevator Malfunction',
-    categoryIcon: 'elevator',
-    location: 'East Wing Shaft 3',
-    building: 'Fl 12–28',
-    severity: 'High',
-    status: 'In Progress',
-    date: 'Oct 24, 2024 · 09:30 AM',
-  },
-  {
-    id: '3',
-    ref: '#SR-9039',
-    category: 'Electrical Surge',
-    categoryIcon: 'bolt',
-    location: 'Floor 14',
-    building: 'Server Hub Omega',
-    severity: 'High',
-    status: 'Under Review',
-    date: 'Oct 23, 2024 · 04:45 PM',
-  },
-  {
-    id: '4',
-    ref: '#SR-9035',
-    category: 'Plumbing Leak',
-    categoryIcon: 'water_drop',
-    location: 'Suite 408',
-    building: 'Executive Loft',
-    severity: 'Medium',
-    status: 'Dispatched',
-    date: 'Oct 23, 2024 · 01:15 PM',
-  },
-  {
-    id: '5',
-    ref: '#SR-9031',
-    category: 'Access Control / RFID',
-    categoryIcon: 'passkey',
-    location: 'South Lobby',
-    building: 'Turnstiles Gate 02',
-    severity: 'Low',
-    status: 'Scheduled',
-    date: 'Oct 22, 2024 · 11:20 AM',
-  },
-  {
-    id: '6',
-    ref: '#SR-9028',
-    category: 'Structural Glazing',
-    categoryIcon: 'window',
-    location: 'Skyline Atrium Glass Pane 4',
-    building: '',
-    severity: 'Low',
-    status: 'Closed',
-    date: 'Oct 21, 2024 · 03:00 PM',
-  },
-  {
-    id: '7',
-    ref: '#SR-9022',
-    category: 'Fire Safety Sensor',
-    categoryIcon: 'detector_smoke',
-    location: 'Sub-Level 2 Parking',
-    building: 'Section C',
-    severity: 'Medium',
-    status: 'Closed',
-    date: 'Oct 20, 2024 · 08:50 AM',
-  },
-];
+export default function serviceRequestsDashboard() {
+  // Data
+  const [requests, setRequests] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-export const ServiceRequestsDashboard= React.FC = () => {
-  // Filters & State
+  // UI state
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [selectedSeverity, setSelectedSeverity] = useState('ALL');
   const [dateRange, setDateRange] = useState('30D');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isExported, setIsExported] = useState(false);
-
-  // Modal Form State
   const [formData, setFormData] = useState({
     location: '',
     category: 'HVAC System',
@@ -110,51 +19,71 @@ export const ServiceRequestsDashboard= React.FC = () => {
     brief: '',
   });
 
-  // Filter Logic
+  // Fetch from backend
+  useEffect(() => {
+    const fetchRequests = async () => {
+      try {
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+        const response = await fetch(`${apiUrl}/api/requests`);
+        if (!response.ok) throw new Error('Network response was not ok');
+        const data = await response.json();
+        setRequests(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error('Failed to fetch requests:', error);
+        setRequests([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchRequests();
+  }, []);
+
+  // Filtering (must come AFTER the requests state)
   const filteredRequests = useMemo(() => {
-    return INITIAL_REQUESTS.filter((req) => {
-      const q = searchQuery.toLowerCase().trim();
+    const q = searchQuery.toLowerCase().trim();
+    return requests.filter((req) => {
       const matchesQuery =
         !q ||
-        req.ref.toLowerCase().includes(q) ||
-        req.category.toLowerCase().includes(q) ||
-        req.location.toLowerCase().includes(q) ||
-        req.building.toLowerCase().includes(q);
+        req.reference_number?.toLowerCase().includes(q) ||
+        req.category?.toLowerCase().includes(q) ||
+        req.location?.toLowerCase().includes(q);
 
       const matchesCat =
         selectedCategory === 'ALL' ||
-        req.category.toLowerCase().includes(selectedCategory.toLowerCase());
+        req.category?.toLowerCase().includes(selectedCategory.toLowerCase());
 
       const matchesSev =
         selectedSeverity === 'ALL' ||
-        req.severity.toLowerCase() === selectedSeverity.toLowerCase();
+        req.severity?.toLowerCase() === selectedSeverity.toLowerCase();
 
       return matchesQuery && matchesCat && matchesSev;
     });
-  }, [searchQuery, selectedCategory, selectedSeverity]);
+  }, [requests, searchQuery, selectedCategory, selectedSeverity]);
 
   const handleExport = () => {
     setIsExported(true);
-    setTimeout(() => setIsExported(false), 2200);
+    setTimeout(() => setIsExported(false), 2000);
   };
 
   const resetFilters = () => {
     setSearchQuery('');
     setSelectedCategory('ALL');
     setSelectedSeverity('ALL');
+    setDateRange('30D');
   };
 
   return (
+ 
     <div className="bg-[#1b0f1d] text-[#f2dcf1] min-h-screen antialiased selection:bg-[#fe571e] selection:text-[#531300] font-['Plus_Jakarta_Sans',sans-serif]">
       {/* ---------------- PERSISTENT LEFT SIDEBAR ---------------- */}
       <aside className="fixed left-0 top-0 h-full w-72 bg-[#160a18]/80 backdrop-blur-2xl z-50 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.3)]">
         <div className="flex flex-col">
           {/* Brand Header */}
           <div className="h-20 flex items-center px-6 gap-2 bg-[#241726]/40">
-            <img
-              alt=""
-              className="h-8 w-auto object-contain"
-              src="https://lh3.googleusercontent.com/aida/AEtjO1WPC1h7HCJsBbHN87TvGKCVhbWJgUYEW2BzL1DVxAjC-S-H7YqWxKcygmIbmNLs2fjRSLJILWcY32IsWJlwb3BX70oxU7guyJVxaasCgcefMtaG6F5nGgoi50_cr7m3J7aPkI6Wh2uv3bND8pU_dgmyPGFQRX9mm7gOdNcu2DHa9qT5TZhFCuORaXpCchFm0uSFusmlMnee01k4600CAd4nffKOU8s5lKiifsPVSYHbNmtR346DExiW6_I"
+           <img
+              src="https://ui-avatars.com/api/?name=CC&background=fe571e&color=fff"
+              alt="CivicConnect"
+              className="h-8 w-8 rounded-lg"
             />
             <span className="font-['Poiret_One'] text-[26px] tracking-wider text-[#f2dcf1]">
               Civic Connect
@@ -263,10 +192,10 @@ export const ServiceRequestsDashboard= React.FC = () => {
               </div>
               <div className="relative">
                 <img
-                  alt="Profile"
-                  className="w-8 h-8 rounded-full object-cover ring-2 ring-[#fe571e]/30"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMziXXprKJ5ZVhoW7yuzylMeBWHSJCayvJ4fWsehqruVgJq9cn56LlASFGXMeEr30cio_MRuxgloQcNX2wY3SBioc497BHLgn5od6hiI2Mr7Qgjt3VwS6_OvmjanislIwmWHuXzuJI-0bGM91QdD-XgvYIST9DHhamJEnXDBwhYdg_4KuwNR8AiIBPfaFlxGu2gIJJ-nbGP062UAPmXj2AOIuL-no3fJWK5G_Gn6kZA2Ysp9NfJWyN"
-                />
+                    src="https://ui-avatars.com/api/?name=CC&background=fe571e&color=fff"
+                    alt="CivicConnect"
+                    className="h-8 w-8 rounded-lg"
+                  />
                 <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#28C76F] rounded-full ring-2 ring-[#160a18]"></span>
               </div>
             </div>
@@ -558,173 +487,120 @@ export const ServiceRequestsDashboard= React.FC = () => {
                         <th className="py-4 px-6 text-right font-semibold">Quick Actions</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#b5cbcb]/5">
-                      {filteredRequests.map((req) => (
-                        <tr
-                          key={req.id}
-                          className="group hover:bg-[#822625]/25 transition-colors relative cursor-pointer"
-                        >
-                          {/* Reference */}
-                          <td className="py-4 px-6 font-semibold text-[16px] text-[#f2dcf1] whitespace-nowrap">
-                            <div className="flex items-center gap-2">
-                              <span
-                                className={`w-1.5 h-6 rounded-full ${
-                                  req.severity === 'Critical'
-                                    ? 'bg-[#fe571e]'
-                                    : req.severity === 'High'
-                                    ? 'bg-[#ffb3ae]'
-                                    : req.status === 'Closed'
-                                    ? 'bg-[#28C76F]'
-                                    : 'bg-[#3e3040]'
-                                }`}
-                              ></span>
-                              <span
-                                className={`font-mono tracking-tight ${
-                                  req.severity === 'Critical'
-                                    ? 'text-[#ffb59f]'
-                                    : req.status === 'Closed'
-                                    ? 'text-[#b5cbcb]'
-                                    : 'text-[#f2dcf1]'
-                                }`}
-                              >
-                                {req.ref}
-                              </span>
-                            </div>
-                          </td>
+                        <tbody className="divide-y divide-[#b5cbcb]/5">
+  {/* If the data is loading, show a clean loading message */}
+  {isLoading ? (
+    <tr><td colSpan="7" className="text-center py-8 text-[#B5CBCB]">Connecting to CivicConnect Live Database...</td></tr>
+  ) : (
+    /* Make sure you are mapping over 'requests' (the state we made) or 'filteredRequests' if Stitch made a search bar */
+    filteredRequests.map((req) => (
+      <tr
+        key={req.id}
+        className="group hover:bg-[#822625]/25 transition-colors relative cursor-pointer"
+      >
+        {/* Reference */}
+        <td className="py-4 px-6 font-semibold text-[16px] text-[#f2dcf1] whitespace-nowrap">
+          <div className="flex items-center gap-2">
+            <span
+              className={`w-1.5 h-6 rounded-full ${
+                req.severity === 'Critical' ? 'bg-[#fe571e]' : 
+                req.severity === 'High' ? 'bg-[#ffb3ae]' : 
+                req.status === 'Closed' ? 'bg-[#28C76F]' : 'bg-[#3e3040]'
+              }`}
+            ></span>
+            <span
+              className={`font-mono tracking-tight ${
+                req.severity === 'Critical' ? 'text-[#ffb59f]' : 
+                req.status === 'Closed' ? 'text-[#b5cbcb]' : 'text-[#f2dcf1]'
+              }`}
+            >
+              {req.reference_number} {/* DB Field */}
+            </span>
+          </div>
+        </td>
 
-                          {/* Category */}
-                          <td className="py-4 px-4 text-[14px] text-[#f2dcf1] whitespace-nowrap">
-                            <div className="flex items-center gap-2">
-                              <span
-                                className={`material-symbols-outlined text-[18px] ${
-                                  req.status === 'Closed' ? 'text-[#b5cbcb]/70' : 'text-[#b5cbcb]'
-                                }`}
-                              >
-                                {req.categoryIcon}
-                              </span>
-                              <span>{req.category}</span>
-                            </div>
-                          </td>
+        {/* Category */}
+        <td className="py-4 px-4 text-[14px] text-[#f2dcf1] whitespace-nowrap">
+          <div className="flex items-center gap-2">
+            <span
+              className={`material-symbols-outlined text-[18px] ${
+                req.status === 'Closed' ? 'text-[#b5cbcb]/70' : 'text-[#b5cbcb]'
+              }`}
+            >
+              build {/* Generic icon fallback since DB doesn't store icons */}
+            </span>
+            <span>{req.category}</span> {/* DB Field */}
+          </div>
+        </td>
 
-                          {/* Location */}
-                          <td className="py-4 px-4 text-[14px] text-[#b5cbcb] whitespace-nowrap">
-                            <span className="text-[#f2dcf1] font-medium">{req.location}</span>
-                            {req.building && <span> · {req.building}</span>}
-                          </td>
+        {/* Location (Fallback to Wonderpark since our quick GET query didn't pull location) */}
+        <td className="py-4 px-4 text-[14px] text-[#b5cbcb] whitespace-nowrap">
+          <span className="text-[#f2dcf1] font-medium">Wonderpark Estates</span>
+        </td>
 
-                          {/* Severity Badge */}
-                          <td className="py-4 px-4 whitespace-nowrap">
-                            {req.severity === 'Critical' && (
-                              <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#fe571e] text-[#531300] text-[10px] font-bold uppercase tracking-wider shadow-[0_0_12px_rgba(254,87,30,0.4)]">
-                                <span className="w-1.5 h-1.5 rounded-full bg-[#531300] animate-ping"></span>
-                                Critical
-                              </span>
-                            )}
-                            {req.severity === 'High' && (
-                              <span className="inline-flex items-center px-3 py-0.5 rounded-full bg-[#822625]/50 text-[#ffb3ae] text-[10px] font-bold uppercase tracking-wider">
-                                High
-                              </span>
-                            )}
-                            {req.severity === 'Medium' && (
-                              <span className="inline-flex items-center px-3 py-0.5 rounded-full bg-[#3e3040] text-[#b5cbcb] text-[10px] font-bold uppercase tracking-wider">
-                                Medium
-                              </span>
-                            )}
-                            {req.severity === 'Low' && (
-                              <span className="inline-flex items-center px-3 py-0.5 rounded-full bg-[#332535] text-[#b5cbcb]/80 text-[10px] font-bold uppercase tracking-wider">
-                                Low
-                              </span>
-                            )}
-                          </td>
+        {/* Severity Badge */}
+        <td className="py-4 px-4 whitespace-nowrap">
+          {req.severity === 'Critical' && (
+            <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#fe571e] text-[#531300] text-[10px] font-bold uppercase tracking-wider shadow-[0_0_12px_rgba(254,87,30,0.4)]">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#531300] animate-ping"></span>
+              Critical
+            </span>
+          )}
+          {req.severity === 'High' && (
+            <span className="inline-flex items-center px-3 py-0.5 rounded-full bg-[#822625]/50 text-[#ffb3ae] text-[10px] font-bold uppercase tracking-wider">
+              High
+            </span>
+          )}
+          {req.severity === 'Medium' && (
+            <span className="inline-flex items-center px-3 py-0.5 rounded-full bg-[#3e3040] text-[#b5cbcb] text-[10px] font-bold uppercase tracking-wider">
+              Medium
+            </span>
+          )}
+          {req.severity === 'Low' && (
+            <span className="inline-flex items-center px-3 py-0.5 rounded-full bg-[#332535] text-[#b5cbcb]/80 text-[10px] font-bold uppercase tracking-wider">
+              Low
+            </span>
+          )}
+        </td>
 
-                          {/* Status Badge */}
-                          <td className="py-4 px-4 whitespace-nowrap">
-                            {req.status === 'New Alert' && (
-                              <span className="inline-flex items-center px-3 py-0.5 rounded-full bg-[#332535] text-[#ffb59f] text-[10px] font-bold">
-                                New Alert
-                              </span>
-                            )}
-                            {req.status === 'In Progress' && (
-                              <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#fe571e]/20 text-[#ffb59f] text-[10px] font-bold">
-                                <span className="w-1.5 h-1.5 rounded-full bg-[#ffb59f] animate-pulse"></span>
-                                In Progress
-                              </span>
-                            )}
-                            {req.status === 'Under Review' && (
-                              <span className="inline-flex items-center px-3 py-0.5 rounded-full bg-[#332535] text-[#b5cbcb] text-[10px] font-bold">
-                                Under Review
-                              </span>
-                            )}
-                            {req.status === 'Dispatched' && (
-                              <span className="inline-flex items-center px-3 py-0.5 rounded-full bg-[#fe571e]/15 text-[#ffb59f] text-[10px] font-bold">
-                                Dispatched
-                              </span>
-                            )}
-                            {req.status === 'Scheduled' && (
-                              <span className="inline-flex items-center px-3 py-0.5 rounded-full bg-[#281b2a] text-[#b5cbcb] text-[10px] font-bold">
-                                Scheduled
-                              </span>
-                            )}
-                            {req.status === 'Closed' && (
-                              <span className="inline-flex items-center px-3 py-0.5 rounded-full bg-[#160a18] text-[#28C76F] text-[10px] font-bold">
-                                Closed
-                              </span>
-                            )}
-                          </td>
+        {/* Status Badge */}
+        <td className="py-4 px-4 whitespace-nowrap">
+          <span className="inline-flex items-center px-3 py-0.5 rounded-full bg-[#332535] text-[#ffb59f] text-[10px] font-bold">
+             {req.status} {/* DB Field */}
+          </span>
+        </td>
 
-                          {/* Date Logged */}
-                          <td className="py-4 px-4 text-[12px] text-[#b5cbcb]/80 whitespace-nowrap">
-                            {req.date}
-                          </td>
+        {/* Date Logged */}
+        <td className="py-4 px-4 text-[12px] text-[#b5cbcb]/80 whitespace-nowrap">
+          {new Date(req.created_at).toLocaleDateString()} {/* Converted DB Field */}
+        </td>
 
-                          {/* Quick Actions */}
-                          <td className="py-4 px-6 text-right whitespace-nowrap">
-                            <div className="flex items-center justify-end gap-1">
-                              <button
-                                className="p-1.5 rounded-lg text-[#b5cbcb] hover:text-[#f2dcf1] hover:bg-[#332535] transition-colors"
-                                title="Inspect Telemetry"
-                              >
-                                <span className="material-symbols-outlined text-[18px]">
-                                  visibility
-                                </span>
-                              </button>
-                              <button
-                                disabled={req.status === 'Closed'}
-                                className={`p-1.5 rounded-lg transition-colors ${
-                                  req.status === 'Closed'
-                                    ? 'text-[#b5cbcb]/40 cursor-not-allowed'
-                                    : 'text-[#b5cbcb] hover:text-[#ffb59f] hover:bg-[#332535]'
-                                }`}
-                                title={req.status === 'Closed' ? 'Resolved' : 'Dispatch Field Crew'}
-                              >
-                                <span className="material-symbols-outlined text-[18px]">
-                                  {req.status === 'Closed' ? 'check' : 'send'}
-                                </span>
-                              </button>
-                              <button
-                                className="p-1.5 rounded-lg text-[#b5cbcb] hover:text-[#f2dcf1] hover:bg-[#332535] transition-colors"
-                                title="More Options"
-                              >
-                                <span className="material-symbols-outlined text-[18px]">
-                                  more_vert
-                                </span>
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
+        {/* Quick Actions */}
+        <td className="py-4 px-6 text-right whitespace-nowrap">
+          <div className="flex items-center justify-end gap-1">
+            <button className="p-1.5 rounded-lg text-[#b5cbcb] hover:text-[#f2dcf1] hover:bg-[#332535] transition-colors">
+              <span className="material-symbols-outlined text-[18px]">visibility</span>
+            </button>
+            <button className="p-1.5 rounded-lg text-[#b5cbcb] hover:text-[#ffb59f] hover:bg-[#332535] transition-colors">
+              <span className="material-symbols-outlined text-[18px]">send</span>
+            </button>
+          </div>
+        </td>
+      </tr>
+    ))
+  )}
+</tbody>
                   </table>
                 </div>
 
                 {/* Table Footer / Pagination */}
                 <div className="px-6 py-4 bg-[#332535]/60 flex flex-col sm:flex-row items-center justify-between gap-4">
                   <span className="text-[12px] text-[#b5cbcb]/70">
-                    Showing <span className="text-[#f2dcf1] font-semibold">1</span> to{' '}
+                    Showing <span className="text-[#f2dcf1] font-semibold">{filteredRequests.length ? 1 : 0}</span> to{' '}
                     <span className="text-[#f2dcf1] font-semibold">
-                      {filteredRequests.length}
-                    </span>{' '}
-                    of <span className="text-[#f2dcf1] font-semibold">42</span> requests
+                {filteredRequests.length}
+              </span>{' '}
+              of <span className="text-[#f2dcf1] font-semibold">{requests.length}</span> requests
                   </span>
                   <div className="flex items-center gap-1">
                     <button className="px-3 py-1 rounded-lg bg-[#160a18] text-[#b5cbcb]/60 hover:text-[#f2dcf1] hover:bg-[#241726] transition-colors text-[12px] font-semibold">
@@ -786,11 +662,7 @@ export const ServiceRequestsDashboard= React.FC = () => {
 
                 {/* Architectural Presence Image 1 */}
                 <div className="relative rounded-xl overflow-hidden shadow-lg group h-44 lg:h-auto">
-                  <img
-                    alt="Mechanical Core & Chiller Deck"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuByS9UK5m84gzOSxOptFGEjb2ezl_7DIi4dNDDhfg4IyG9eYBhW4oaIixO0n6kozs4Nx0MKLxrK1iA6NfHA4qj8fdRrwsXtor_WBLwfXqhGVqcfqzvZ_sNemxzD4PpbrCl6-C8059NwXhbQoh5JOza36VnFcvYr9oLA2qx6ZViDbPnsrNEfz-N9vv7aX_S7dv_qfpTmzbLwUq7jmdlIxqaJgYKhzIxrzd_zufli95g2mc43Yca0AhTa"
-                  />
+                  <img src="https://ui-avatars.com/api/?name=Elena+Vance&background=fe571e&color=fff" alt="Profile" className="..." />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#160a18] via-[#160a18]/40 to-transparent p-4 flex flex-col justify-end">
                     <span className="text-[10px] uppercase tracking-widest text-[#ffb59f] font-bold">
                       Penthouse Tower 1
@@ -803,11 +675,7 @@ export const ServiceRequestsDashboard= React.FC = () => {
 
                 {/* Architectural Presence Image 2 */}
                 <div className="relative rounded-xl overflow-hidden shadow-lg group h-44 lg:h-auto">
-                  <img
-                    alt="High-Velocity Transit Shuttles"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuApbYPlV1swJAJv0EbBkpDQ5kj5DpOpUYrsZN-psNaP8xzQtY5e2C6Ppc_DTeVUO31FURbloX914TXEmAHDrfWUQlsVc93dkddvRnIS8UxuxgmAW2si5iZf6U3fy4Y01xbuffqv-SKskZxCeuvjFzb0GXGBJM1I5XUiuk_tpd0HOT3WF4PrUr4Ecx4v4l70GwVhJbfYTFb0zVfbeHqJSrrBXz4-VP3VpBwSt8OghWIEs3oeSjXTY9X4"
-                  />
+                  <img src="https://ui-avatars.com/api/?name=Elena+Vance&background=fe571e&color=fff" alt="Profile" className="..." />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#160a18] via-[#160a18]/40 to-transparent p-4 flex flex-col justify-end">
                     <span className="text-[10px] uppercase tracking-widest text-[#ffb3ae] font-bold">
                       East Shaft Array
@@ -935,6 +803,4 @@ export const ServiceRequestsDashboard= React.FC = () => {
       </div>
     </div>
   );
-};
-
-export default ServiceRequestsDashboard;
+}
