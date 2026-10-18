@@ -16,3 +16,68 @@ RF-09 | FR-001 AC: "with category description and unit/location completed" (**Re
 RF-10 | FR-001 AC: description must be "completed" (**Req**) | The second mandatory common field. Whitespace-only counts as not completed | Equivalence Partitioning (EP): blank mandatory field (description) | Maintenance; description **" "**; location and faultType set | Rejected wit a ValidationError naming "description" |
 
 These tests verify creation and validation at factory level only. “Unique reference number” (FR-001) and “visually distinguished in the staff queue” (FR-011) are not verified here; they need persistence, API and UI evidence.
+
+## Actual testing of tests in Table A (actual results)
+Upon seeing the specified tests in Table A, here are the following results of the tests, and log any failures and reason for failures:
+
+✔ RF-01: valid Maintenance request gets default severity Low and status New (3.4874ms)
+✔ RF-02: explicit severity High is preserved (0.2503ms)
+✔ RF-03: severity outside Low/Medium/High is rejected (0.4386ms)
+✔ RF-04: Maintenance request without faultType is rejected(0.1133ms)
+✔ RF-05: Security request with a future incidentTime is rejected (0.8656ms)
+✔ RF-06: Common Area request without areaName is rejected (0.1887ms)
+✔ RF-07: valid Lost Property request is created (0.1693ms)
+✖ RF-08: unknown category is rejected (1.7738ms)
+✔ RF-09: request without location is rejected for any category (0.225ms)
+✔ RF-10: request with blank description is rejected (0.2942ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 9
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 638.9206
+
+✖ failing tests:
+
+test at test\requestFactory.test.js:52:1
+✖ RF-08: unknown category is rejected (1.7738ms)
+
+### Logging of failed test 
+RF-08 failed because it looks for "unknown category" in lowercase. The code's message is "Unknown category: Pets", and "includes" is case sensitive
+**Fix to ensure test pass**: change the search text to "Unknown category". After that, all 10 pass with both **node --test test/requestFactory.test.js** and the plain **node --test** that **npm test** runs.
+
+## Indication of results after "Unknown category" fix
+✔ RF-01: valid Maintenance request gets default severity Low and status New (2.2709ms)
+✔ RF-02: explicit severity High is preserved (0.1572ms)
+✔ RF-03: severity outside Low/Medium/High is rejected (0.5815ms)
+✔ RF-04: Maintenance request without faultType is rejected(0.1761ms)
+✔ RF-05: Security request with a future incidentTime is rejected (2.1514ms)
+✔ RF-06: Common Area request without areaName is rejected (0.6369ms)
+✔ RF-07: valid Lost Property request is created (0.4415ms)
+✔ RF-08: Unknown category is rejected (0.1584ms)
+✔ RF-09: request without location is rejected for any category (0.1845ms)
+✔ RF-10: request with blank description is rejected (0.2389ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 200.8882
+
+### Table B: results (after npm test)
+ID | Actual result | Status | Interpretation (what it shows, and what it does not prove) |
+| --- | --- | --- | --- | 
+RF-01 | valid Maintenance request gets default severity Low and status New (2.2709ms) | Pass | Shows the factory applies the default and initial state. Does not prove they are saved or displayed. |
+RF-02 | explicit severity High is preserved (0.1572ms) | Pass | Shows an explicit High survives creation. Does not prove it is stored or highlighted in the staff queue (FR-011 AC, NFR-002). | 
+RF-03 | severity outside Low/Medium/High is rejected (0.5815ms) | Pass | Shows invalid severities are rejected at creation. Does not prove other routes (for example direct DB writes) are protected. |
+RF-04 | Maintenance request without faultType is rejected(0.1761ms) | Pass | Shows one missing-field rule works. Does not cover other missing fields or wrong types | 
+RF-05 | Security request with a future incidentTime is rejected (2.1514ms) | Pass | Shows a future time is rejected. Does not test time zones or the exact boundary. | 
+RF-06 | Common Area request without areaName is rejected (0.6369ms) | Pass | Shows the rule for one missing field. Rests on an assumption, not an M1 requirement.|
+RF-07 | valid Lost Property request is created (0.4415ms) | Pass | Shows a valid Lost Property request passes. Does not prove the proposed fields suit residents. |
+RF-08 | Unknown category is rejected (0.1584ms) | Pass | Shows unknown categories are rejected. Does not prove the API returns 400 (needs an integration test). |
+RF-09 | request without location is rejected for any category (0.1845ms) | Pass | Shows location is enforced for every category (FR-001 AC). Found a defect, now fixed. |
+RF-10 | request with blank description is rejected (0.2389ms) | Pass | Shows blank descriptions are rejected. Does not test other invalid text. |
