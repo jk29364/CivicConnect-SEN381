@@ -5,6 +5,7 @@ import requestService from './services/RequestService.js';
 import { DashboardCountsObserver } from './services/observers/DashboardCountsObserver.js';
 import { authenticateToken, requireRole } from './middleware/auth.middleware.js';
 import requestController from './middleware/request.controller.js';
+import authRouter from './routes/auth.routes.js';
 
 const app = express();
 app.use(cors());
@@ -20,6 +21,8 @@ app.get('/api/health', (req, res) => {
         message: 'CivicConnect Core API is securely running.'
     });
 });
+
+app.use('/api/auth', authRouter);
 
 // FR-001/FR-010: resident submission; JWT identity is the source of submittedBy.
 app.post('/api/requests', authenticateToken, requireRole(['Resident']),

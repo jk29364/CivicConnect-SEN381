@@ -1,29 +1,62 @@
-// Thin wrapper around the CivicConnect API.
-// Tokens come from .env.local. Dev-only: VITE_ values are visible in the browser bundle.
+import { clearStoredToken, getStoredToken, SIGNED_OUT_EVENT } from './auth/token';
+
 const BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-const TOKENS = {
-  resident: import.meta.env.VITE_RESIDENT_TOKEN || '',
-  staff: import.meta.env.VITE_STAFF_TOKEN || '',
-};
 
-export async function api(path, { role = 'resident', method = 'GET', body } = {}) {
-  const headers = {};
-  if (body !== undefined) headers['Content-Type'] = 'application/json';
-  if (TOKENS[role]) headers.Authorization = `Bearer ${TOKENS[role]}`;
+export class ApiError extends Error {
+  constructor(message, { status = 0, details = [], code = null } = {}) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
+    this.details = details;
+    this.code = code;
+  }
+}
 
-  const res = await fetch(`${BASE}${path}`, {
-    method,
-    headers,
-    body: body !== undefined ? JSON.stringify(body) : undefined,
+function buildUrl(path, query) {
+  const url = new URL(`${BASE}${path}`);
+  Object.entries(query ?? {}).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== '') url.searchParams.set(key, String(value));
   });
+  return url;
+}
+
+/**
+ * Interceptor: attaches the stored JWT to every call, parses errors into ApiError,
+ * and signs the user out when the server rejects the token.
+ */
+export async function apiFetch(path, { method = 'GET', body, query } = {}) {
+  const headers = { Accept: 'application/json' };
+  const token = getStoredToken();
+  if (token) headers.Authorization = `Bearer ${token}`;
+  if (body !== undefined) headers['Content-Type'] = 'application/json';
+
+  let res;
+  try {
+    res = await fetch(buildUrl(path, query), {
+      method,
+      headers,
+      body: body !== undefined ? JSON.stringify(body) : undefined,
+    });
+  } catch {
+    throw new ApiError('Cannot reach the server. Check that the backend is running.');
+  }
+
   const data = await res.json().catch(() => ({}));
+
+  if (res.status === 401 || (res.status === 403 && /token/i.test(data.message ?? ''))) {
+    clearStoredToken();
+    window.dispatchEvent(new Event(SIGNED_OUT_EVENT));
+  }
+
   if (!res.ok) {
-    const err = new Error(data.message || data.error || `Request failed (${res.status})`);
-    err.status = res.status;
-    err.details = Array.isArray(data.details) ? data.details : [];
-    throw err;
+        throw new ApiError(`Cannot reach the backend at ${BASE}. Check that it is running (npm run dev) and try again.`);
   }
   return data;
+}
+
+/** Name used by existing pages. The `role` option is ignored: the signed-in token decides identity. */
+export function api(path, options = {}) {
+  return apiFetch(path, { method: options.method, body: options.body, query: options.query });
 }
 
 export const CATEGORIES = ['Maintenance', 'Security', 'Common Area', 'Lost Property'];
