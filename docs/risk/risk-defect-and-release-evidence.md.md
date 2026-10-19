@@ -1,5 +1,14 @@
 # Milestone 3 Documentation Contributions
 
+## Updated evidence disposition dated 19 October 2026
+
+The supplied FR/NFR linkage PDF (E12 in the PED closure) reports live invalid-transition 400, stale-version 409, history recording and unchanged history hash after rejection, resident isolation, filtering, distinct references and access-control denial. This provides additional team-reported evidence for RSK-M3-01/02. Preserve the actual test outputs and tested revision; this documentation update did not execute those checks or repair the weak historical tc-db.js script.
+
+DEF-FIN-03 is partly superseded for the newer presentation build: login/register routes now exist. Their later existence does not establish the historical login PASS result at the earlier revision, and the admin route remains absent. The API latency result still does not prove full browser rendering performance.
+
+FR-008 and FR-009 now have partial visual reporting evidence; they are no longer described as wholly absent. Notifications, assignment and comments remain Not Met. Database certificate verification, absent login rate limiting, incomplete migrations and full UI acceptance remain release concerns. Existing defect IDs/history are preserved; no blanket closure or production approval is claimed.
+
+
 ## Finalisation defect and release review dated 18 October 2026
 
 Historical defect closures and release logs below remain preserved. The following

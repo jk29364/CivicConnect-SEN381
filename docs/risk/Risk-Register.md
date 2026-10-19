@@ -1,5 +1,18 @@
 # 2. Initial Project Risk Register (Wonderpark Estates)
 
+## Updated evidence review dated 19 October 2026
+
+This dated continuation follows the team-supplied requirement/linkage PDF retained as E12 in `docs/finalisation/evidence/requirements-linkage-2026-10-19.pdf`. It does not alter historical 18 October observations or establish the exact commit tested by the source.
+
+| Existing risk | Updated treatment |
+| :--- | :--- |
+| R-002 | E12 reports token/role 401/403 and cross-resident 404 checks. Authentication now exists in the presentation build. Residual rate-limiting, certificate-verification and deployment risks remain; do not claim universal security. |
+| R-006 | E12 reports backend transitions, filters and scoping passes, but submission UI-to-DB, resident UI and queue UI are still pending/partial. Integration risk is reduced in tested backend paths, not closed for the whole product. |
+| R-004 | Dashboard totals/grouping are partial and computed over a bounded list. They are not complete estate-wide aggregates or evidence of cloud capacity. |
+
+Architecture consequences are recorded as TD-FIN-01 and TD-FIN-02 in the PED closure: RequestService contains persistence SQL; auth routes bypass the service layer. Remediation is future work, not a claimed refactor. Live checks are attributed to E12; they were not rerun for this documentation change.
+
+
 ## Finalisation review dated 18 October 2026
 
 The original entries below are retained as project history. This dated review

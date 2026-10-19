@@ -1,6 +1,6 @@
 # Deployment Compatibility
 
-CivicConnect's layered monolith is designed to run as a single Node.js web service, with PostgreSQL providing persistent storage independently of the application process. Under ADR-STACK1, the intended hosting arrangement is a React/Vite frontend on Vercel, an Express backend on Render, and a PostgreSQL database on Supabase. This separation supports the R0.00 staging budget and allows each component to be deployed without changing the Factory, Observer, or service-layer design. The repository currently provides the backend implementation; the hosting arrangement remains a deployment target rather than evidence of a completed cloud release.
+CivicConnect's layered monolith is designed to run as a single Node.js web service, with PostgreSQL providing persistent storage independently of the application process. Under ADR-STACK1, the intended hosting arrangement is a React/Vite frontend on Vercel, an Express backend on Render, and a PostgreSQL database on Supabase. This separation supports the R0.00 staging budget and allows each component to be deployed without changing the Factory, Observer, or service-layer design. The current presentation checkout includes both backend and frontend; the proposed cloud hosting arrangement remains a target rather than evidence of a completed cloud release. The reported demonstration is local.
 
 ## Runtime and Platform Compatibility
 
@@ -10,7 +10,7 @@ CivicConnect's layered monolith is designed to run as a single Node.js web servi
 | Dependency installation | Install the committed dependency set with `npm ci` | `package-lock.json` provides reproducible dependency resolution. The installed Express dependency is currently `^5.2.1`; the earlier Express 4.21.x selection in ADR-STACK1 requires reconciliation with this implementation baseline. |
 | Application startup | Run `npm start` from the repository root | This starts `src/server.js`. No transpilation or backend build command is required. The server reads the host-provided `PORT`, defaulting to `3000` locally. |
 | Database | A reachable PostgreSQL instance with the CivicConnect schema | The `pg` connection pool reads `DATABASE_URL`. Supabase is the selected host, while PostgreSQL 16.x remains the documented database target; the actual hosted version must be recorded during deployment verification. |
-| Frontend | A separately built React/Vite application configured with the backend's public HTTPS address | The frontend is a planned deployment component and is not included in the current backend repository. Its build settings and browser compatibility require verification when the UI is integrated. |
+| Frontend | A separately built React/Vite application configured with the backend's public HTTPS address | The frontend is now included under frontend/. Full UI acceptance and browser timing remain incomplete in the updated linkage record; hosted compatibility is not established by the local demo. |
 
 The backend does not require a Windows-specific service, a local database file, or a shared filesystem. Persistent request records and audit history reside in PostgreSQL and therefore survive application restarts and redeployments. A Docker image is not required by the current startup process, and no container configuration is supplied in this baseline.
 
@@ -22,7 +22,7 @@ Deployment configuration must be supplied through the hosting environment rather
 | :--- | :--- |
 | `PORT` | Allows the hosting platform to assign the web-service listening port. |
 | `DATABASE_URL` | Supplies the PostgreSQL connection URI. Credentials containing reserved URI characters must be URL-encoded. The chosen database endpoint must be reachable from the backend host. |
-| `JWT_SECRET` | Supplies the secret used by the existing JWT-verification middleware. A compatible token issuer must use the expected signing configuration and user claims. The repository does not currently provide a login or token-issuing endpoint. |
+| `JWT_SECRET` | Supplies the secret used by the existing JWT-verification middleware. A compatible token issuer must use the expected signing configuration and user claims. The presentation build now provides login/register routes and signed tokens. This later implementation does not retrospectively verify earlier login test claims; deployment still requires compatible account/schema configuration. |
 
 Browser-to-API communication must use HTTPS and the implemented `/api/requests` routes. The `/api/v1/requests` prefix described in the earlier integration design is not currently implemented; frontend configuration and deployment checks must use the actual route contract until versioned routing is introduced through a controlled change.
 
@@ -51,4 +51,4 @@ The selected free-tier topology introduces provider availability, resource, conn
 
 Redeployment must preserve the external database and use an application revision compatible with its schema. Recovery requires both a known working application revision and a verified database backup; reverting application code alone cannot reverse a schema change. These controls address deployment drift (RSK-M3-03), the hosting-budget risk (R-004), and the deployment and recovery concerns recorded under FEC-02 and FEC-07.
 
-The current baseline demonstrates a deployable backend structure and Linux CI configuration. Cloud deployment evidence, frontend integration, restricted CORS, database certificate verification, and a tested recovery procedure remain necessary before claiming full operational readiness.
+The current baseline demonstrates a deployable backend structure and Linux CI configuration. Cloud deployment evidence, full frontend acceptance, restricted CORS, database certificate verification and operational recovery considerations remain unresolved. The 19 October linkage record reports stronger live backend evidence, not production readiness. A new recovery platform is not a blanket M4 requirement.
